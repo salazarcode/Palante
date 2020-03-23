@@ -12,6 +12,7 @@ namespace DataAccess.Repositories.Abstractions
     {
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
+        protected readonly SqlConnection _conn;
 
         public Repository(IConfiguration configuration)
         {
@@ -20,10 +21,8 @@ namespace DataAccess.Repositories.Abstractions
             var enviroment = _configuration.GetSection("enviroment").Value;
 
             _connectionString = _configuration.GetConnectionString(enviroment);
-        }
 
-        public SqlConnection GetConnection() {
-            return new SqlConnection(_connectionString);
+            _conn = new SqlConnection(_connectionString);
         }
     }
 }

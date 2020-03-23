@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Text;
 using Dapper;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DataAccess.Repositories.Abstractions
 {
@@ -14,13 +15,12 @@ namespace DataAccess.Repositories.Abstractions
         {
         }
 
-        public List<Entity> Query<Entity>(string sql, Dictionary<string, object> parameters = null)
+        public async Task<List<Entity>> Query<Entity>(string sql, Dictionary<string, object> parameters = null)
         {
             try
             {
-                using var connection = GetConnection();
-                var res = connection.Query<Entity>(sql, new DynamicParameters(parameters)).ToList();
-                return res;
+                var res = await _conn.QueryAsync<Entity>(sql, new DynamicParameters(parameters));
+                return res.ToList();
             }
             catch (Exception ex)
             {
@@ -28,12 +28,11 @@ namespace DataAccess.Repositories.Abstractions
             }
         }
 
-        public int Execute(string sql, Dictionary<string, object> parameters = null)
+        public async Task<int> Execute(string sql, Dictionary<string, object> parameters = null)
         {
             try
             {
-                using var connection = GetConnection();
-                var res = connection.Execute(sql, new DynamicParameters(parameters));
+                var res = await _conn.ExecuteAsync(sql, new DynamicParameters(parameters));
                 return res;
             }
             catch (Exception ex)

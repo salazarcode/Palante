@@ -7,6 +7,7 @@ using Dapper;
 using Microsoft.Extensions.Configuration;
 using DataAccess.Repositories.Abstractions;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
@@ -17,11 +18,11 @@ namespace DataAccess.Repositories
         }
 
 
-        List<Prestamo> IRepository<Prestamo>.All()
+        async Task<List<Prestamo>> IRepository<Prestamo>.All()
         {
             try
             {
-                var res = Query<Prestamo>("select * from Prestamo", null);
+                var res = await Query<Prestamo>("select * from Prestamo", null);
                 return res;
             }
             catch (Exception ex)
@@ -31,14 +32,14 @@ namespace DataAccess.Repositories
             }
         }
 
-        int IRepository<Prestamo>.Create(Prestamo entity)
+        async Task<int> IRepository<Prestamo>.Create(Prestamo entity)
         {
             try
             {
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
                 parameters.Add("@Capital", entity.Capital);
                 parameters.Add("@ClienteID", entity.ClienteID);
-                var res = Execute("insert into Prestamo values(@Capital, @ClienteID)", parameters);
+                var res = await Execute("insert into Prestamo values(@Capital, @ClienteID)", parameters);
                 return res;
             }
             catch (Exception ex)
@@ -47,11 +48,11 @@ namespace DataAccess.Repositories
             }
         }
 
-        int IRepository<Prestamo>.Delete(int ID)
+        async Task<int> IRepository<Prestamo>.Delete(int ID)
         {
             try
             {
-                var res = Execute("delete from Prestamo where ID = @ID");
+                var res = await Execute("delete from Prestamo where ID = @ID");
                 return res;
             }
             catch (Exception ex)
@@ -60,13 +61,13 @@ namespace DataAccess.Repositories
             }
         }
 
-        Prestamo IRepository<Prestamo>.Find(int ID)
+        async Task<Prestamo> IRepository<Prestamo>.Find(int ID)
         {
             try
             {
                 Dictionary<string, object> param = new Dictionary<string, object>();
                 param.Add("@ID", ID);
-                var res = Query<Prestamo>("select * from Prestamo where ID = @ID", param);
+                var res = await Query<Prestamo>("select * from Prestamo where ID = @ID", param);
                 return res[0];
             }
             catch (Exception ex)
@@ -75,14 +76,14 @@ namespace DataAccess.Repositories
             }
         }
 
-        int IRepository<Prestamo>.Update(Prestamo entity)
+        async Task<int> IRepository<Prestamo>.Update(Prestamo entity)
         {
             try
             {
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
                 parameters.Add("@Capital", entity.Capital);
                 parameters.Add("@ID", entity.ID);
-                var res = Execute("update Cliente set capital = @Capital where ID = @ID", parameters);
+                var res = await Execute("update Cliente set capital = @Capital where ID = @ID", parameters);
                 return res;
             }
             catch (Exception ex)

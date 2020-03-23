@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using DataAccess.Repositories.Abstractions;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
@@ -20,12 +21,12 @@ namespace DataAccess.Repositories
         }
 
 
-        List<Cliente> IRepository<Cliente>.All()
+        async Task<List<Cliente>> IRepository<Cliente>.All()
         {
             try
             {
-                var clientes = Query<Cliente>("select * from cliente", null);
-                var prestamos = _prestamoRepo.All();
+                var clientes = await Query<Cliente>("select * from cliente", null);
+                var prestamos = await _prestamoRepo.All();
 
                 clientes.ForEach(c =>
                 {
@@ -40,13 +41,13 @@ namespace DataAccess.Repositories
             }
         }
 
-        int IRepository<Cliente>.Create(Cliente entity)
+        async Task<int> IRepository<Cliente>.Create(Cliente entity)
         {
             try
             {
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
                 parameters.Add("@Nombres", entity.Nombres);
-                var res = Execute("insert into Cliente values(@Nombres)", parameters);
+                var res = await Execute("insert into Cliente values(@Nombres)", parameters);
                 return res;
             }
             catch (Exception ex)
@@ -55,11 +56,11 @@ namespace DataAccess.Repositories
             }
         }
 
-        int IRepository<Cliente>.Delete(int ID)
+        async Task<int> IRepository<Cliente>.Delete(int ID)
         {
             try
             {
-                var res = Execute("delete from Cliente where ID = @ID");
+                var res = await Execute("delete from Cliente where ID = @ID");
                 return res;
             }
             catch (Exception ex)
@@ -68,13 +69,13 @@ namespace DataAccess.Repositories
             }
         }
 
-        Cliente IRepository<Cliente>.Find(int ID)
+        async Task<Cliente> IRepository<Cliente>.Find(int ID)
         {
             try
             {
                 Dictionary<string, object> param = new Dictionary<string, object>();
                 param.Add("@ID", ID);
-                var res = Query<Cliente>("select * from cliente where ID = @ID", param);
+                var res = await Query<Cliente>("select * from cliente where ID = @ID", param);
                 return res[0];
             }
             catch (Exception ex)
@@ -88,14 +89,14 @@ namespace DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        int IRepository<Cliente>.Update(Cliente entity)
+        async Task<int> IRepository<Cliente>.Update(Cliente entity)
         {
             try
             {
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
                 parameters.Add("@Nombres", entity.Nombres);
                 parameters.Add("@ID", entity.ID);
-                var res = Execute("update Cliente set nombres = @Nombres where ID = @ID", parameters);
+                var res = await Execute("update Cliente set nombres = @Nombres where ID = @ID", parameters);
                 return res;
             }
             catch (Exception ex)

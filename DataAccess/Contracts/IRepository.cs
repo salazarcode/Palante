@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DataAccess.Contracts
 {
     public interface IRepository<Entity> where Entity:class
     {
-        Entity Find(int ID);
-        List<Entity> All();
-        int Create(Entity entity);
-        int Update(Entity entity);
-        int Delete(int ID);
+        Task<Entity> Find(int ID);
+        Task<List<Entity>> All();
+        Task<int> Create(Entity entity);
+        Task<int> Update(Entity entity);
+        Task<int> Delete(int ID);
     }
 }

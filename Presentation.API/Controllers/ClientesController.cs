@@ -29,9 +29,9 @@ namespace Presentation.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Get")]
-        public IEnumerable<Cliente> Get()
+        public async Task<IEnumerable<Cliente>> Get()
         {
-            var res = _clienteRepo.All();
+            var res = await _clienteRepo.All();
             return res;
         }
 
@@ -42,11 +42,11 @@ namespace Presentation.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("Find")]
-        public Cliente Find([FromForm] int ID)
+        public async Task<Cliente> Find([FromForm] int ID)
         {
             try
             {
-                var res = _clienteRepo.Find(ID);
+                var res = await _clienteRepo.Find(ID);
                 return res;
             }
             catch (Exception ex)
