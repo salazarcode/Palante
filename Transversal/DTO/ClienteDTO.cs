@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DataAccess.Entities
+namespace Transversal.DTO
 {
-    public class Cliente
+    public class ClienteDTO
     {
         public int ID { get; set; }
         public string Nombres { get; set; }
-        public List<Prestamo> Prestamos { get; set; }
     }
 }

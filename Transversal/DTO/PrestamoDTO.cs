@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DataAccess.Entities
+namespace Transversal.DTO
 {
-    public class Prestamo
+    public class PrestamoDTO
     {
         public int ID { get; set; }
         public double Capital { get; set; }

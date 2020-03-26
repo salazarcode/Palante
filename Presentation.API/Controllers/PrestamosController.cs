@@ -7,8 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Dapper;
 using System.Data.SqlClient;
-using DataAccess.Contracts;
-using DataAccess.Entities;
+using Domain.Contracts.Repositories;
+using Domain.Entities;
 
 namespace Presentation.API.Controllers
 {
@@ -31,7 +31,7 @@ namespace Presentation.API.Controllers
         [Route("Get")]
         public async Task<IEnumerable<Prestamo>> Get()
         {
-            var res = await _prestamoRepo.All();
+            var res = await _prestamoRepo.Get();
             return res;
         }
 
@@ -46,8 +46,8 @@ namespace Presentation.API.Controllers
         {
             try
             {
-                var res = await _prestamoRepo.Find(ID);
-                return res;
+                var res = await _prestamoRepo.Get(ID);
+                return res[0];
             }
             catch (Exception ex)
             {

@@ -1,15 +1,12 @@
-﻿using DataAccess.Contracts;
-using DataAccess.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Dapper;
-using Microsoft.Extensions.Configuration;
-using DataAccess.Repositories.Abstractions;
-using System.Data.SqlClient;
+﻿using Microsoft.Extensions.Configuration;
+using DAL.Abstractions;
+using Domain.Contracts.Repositories;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Domain.Entities;
+using System;
 
-namespace DataAccess.Repositories
+namespace DAL.Repositories
 {
     public class PrestamoRepository : SuperRepository, IPrestamoRepository
     {
@@ -17,29 +14,13 @@ namespace DataAccess.Repositories
         {
         }
 
-
-        async Task<List<Prestamo>> IRepository<Prestamo>.All()
+        async Task<List<Prestamo>> IPrestamoRepository.ByClienteID(List<int> ids)
         {
             try
             {
-                var res = await Query<Prestamo>("select * from Prestamo", null);
-                return res;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        async Task<int> IRepository<Prestamo>.Create(Prestamo entity)
-        {
-            try
-            {
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
-                parameters.Add("@Capital", entity.Capital);
-                parameters.Add("@ClienteID", entity.ClienteID);
-                var res = await Execute("insert into Prestamo values(@Capital, @ClienteID)", parameters);
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@ClienteID", String.Join(",",ids));
+                var res = await Query<Prestamo>("select * from prestamo where ClienteID in(@ClienteID)", param);
                 return res;
             }
             catch (Exception ex)
@@ -52,7 +33,9 @@ namespace DataAccess.Repositories
         {
             try
             {
-                var res = await Execute("delete from Prestamo where ID = @ID");
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@ID", ID);
+                var res = await Execute("delete from prestamo where ID = @ID", param);
                 return res;
             }
             catch (Exception ex)
@@ -61,14 +44,21 @@ namespace DataAccess.Repositories
             }
         }
 
-        async Task<Prestamo> IRepository<Prestamo>.Find(int ID)
+        async Task<List<Prestamo>> IRepository<Prestamo>.Get(int ID = 0)
         {
             try
             {
-                Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@ID", ID);
-                var res = await Query<Prestamo>("select * from Prestamo where ID = @ID", param);
-                return res[0];
+                Dictionary<string, object> param = null;
+                if (ID != 0)
+                {
+                    param = new Dictionary<string, object>();
+                    param.Add("@ID", ID);
+                }
+
+                string query = "select * from prestamo" + ( ID != 0 ? " where ID = @ID" : "" );
+                
+                var res = await Query<Prestamo>(query, param);
+                return res;
             }
             catch (Exception ex)
             {
@@ -76,14 +66,22 @@ namespace DataAccess.Repositories
             }
         }
 
-        async Task<int> IRepository<Prestamo>.Update(Prestamo entity)
+        async Task<int> IRepository<Prestamo>.Save(Prestamo entity)
         {
+            Dictionary<string, object> param = new Dictionary<string, object>();
+
             try
             {
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
-                parameters.Add("@Capital", entity.Capital);
-                parameters.Add("@ID", entity.ID);
-                var res = await Execute("update Cliente set capital = @Capital where ID = @ID", parameters);
+                if(entity.ID != 0)
+                    param.Add("@ID", entity.ID);
+
+                param.Add("@Capital", entity.Capital);
+                param.Add("@ClienteID", entity.ClienteID);
+
+                string queryInsert = "insert into Prestamo values(@Capital, @ClienteID); select @@identity;";
+                string queryUpdate = "update prestamo set capital = @capital, clienteid = @ClienteID where ID = @ID; select @@identity;";
+
+                var res = await Execute(entity.ID != 0 ? queryUpdate : queryInsert, param);
                 return res;
             }
             catch (Exception ex)

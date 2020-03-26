@@ -7,8 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Dapper;
 using System.Data.SqlClient;
-using DataAccess.Contracts;
-using DataAccess.Entities;
+using Domain.Entities;
+using Domain.Contracts.Repositories;
+using Domain.Contracts.Services;
 
 namespace Presentation.API.Controllers
 {
@@ -16,11 +17,11 @@ namespace Presentation.API.Controllers
     [Route("[controller]")]
     public class ClientesController : ControllerBase
     {
-        private readonly IClienteRepository _clienteRepo;
+        private readonly IClienteService _clienteService;
 
-        public ClientesController(IClienteRepository clienteRepo)
+        public ClientesController(IClienteService clienteService)
         {
-            _clienteRepo = clienteRepo;
+            _clienteService = clienteService;
         }
 
         /// <summary>
@@ -29,30 +30,10 @@ namespace Presentation.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Get")]
-        public async Task<IEnumerable<Cliente>> Get()
+        public async Task<IEnumerable<Cliente>> Get(int ID = 0)
         {
-            var res = await _clienteRepo.All();
+            var res = await _clienteService.Get(ID);
             return res;
-        }
-
-        /// <summary>
-        /// Encontrar un cliente por ID
-        /// </summary>
-        /// <param name="ID"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("Find")]
-        public async Task<Cliente> Find([FromForm] int ID)
-        {
-            try
-            {
-                var res = await _clienteRepo.Find(ID);
-                return res;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Text;
 using Dapper;
 using System.Linq;
 
-namespace DataAccess.Repositories.Abstractions
+namespace DAL.Abstractions
 {
     public abstract class Repository
     {

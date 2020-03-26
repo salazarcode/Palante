@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DataAccess.Contracts;
-using DataAccess.Repositories;
+using Domain.Contracts;
+using DAL.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +11,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Domain.Contracts.Repositories;
+using Domain.Contracts.Services;
+using Domain.Services;
 
 namespace Presentation.API
 {
@@ -30,6 +33,7 @@ namespace Presentation.API
 
             services.AddSingleton<IClienteRepository, ClienteRepository>();
             services.AddSingleton<IPrestamoRepository, PrestamoRepository>();
+            services.AddSingleton<IClienteService, ClienteService>();
 
             OpenApiInfo info = new OpenApiInfo { 
                 Title = "Palante API", 

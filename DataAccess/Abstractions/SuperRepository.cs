@@ -7,7 +7,7 @@ using Dapper;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DataAccess.Repositories.Abstractions
+namespace DAL.Abstractions
 {
     public abstract class SuperRepository : Repository
     {
