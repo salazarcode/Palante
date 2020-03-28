@@ -6,6 +6,6 @@ namespace Domain.Contracts.Repositories
 {
     public interface IPrestamoRepository : IRepository<Prestamo>
     {
-        Task<List<Prestamo>> ByClienteID(List<int> ids);
+        Task<List<Prestamo>> ByClienteID();
     }
 }

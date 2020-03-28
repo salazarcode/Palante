@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Menú iniciador";
+}
+
+    <div class="row">
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Fondeadoras</h5>
+                    <a href="#" class="card-link">Ver</a>
+                    <a href="#" class="card-link">Crear</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Clientes</h5>
+                    <a href="#" class="card-link">Ver</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Préstamos</h5>
+                    <a href="#" class="card-link">Ver</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Carteras</h5>
+                    <a href="#" class="card-link">Ver</a>
+                    <a href="#" class="card-link">Crear</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@section Scripts{
+
+    <script>
+        $(document).ready(async () => {
+            var res = await fetch("http://localhost:60472/Clientes/Get").then(x=>x.json());
+            console.log(res);
+        });
+    </script>
+
+}
+
+
+
+

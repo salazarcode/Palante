@@ -21,7 +21,7 @@ namespace Domain.Services
         public async Task<List<Cliente>> Get(int ID = 0)
         {
             List<Cliente> clientes = await _clienteRepo.Get(ID);
-            List<Prestamo> prestamos = await _prestamoRepo.ByClienteID(clientes.Select(x=>x.ID).ToList());
+            List<Prestamo> prestamos = await _prestamoRepo.ByClienteID();
 
             clientes.ForEach(x => {
                 x.Prestamos = prestamos.Where(z => z.ClienteID == x.ID).ToList();

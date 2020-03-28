@@ -35,6 +35,10 @@ namespace Presentation.API
             services.AddSingleton<IPrestamoRepository, PrestamoRepository>();
             services.AddSingleton<IClienteService, ClienteService>();
 
+            services.AddCors(options => {
+                options.AddPolicy("default", builder => builder.AllowAnyOrigin());
+            });
+
             OpenApiInfo info = new OpenApiInfo { 
                 Title = "Palante API", 
                 Version = "v1" 
@@ -49,6 +53,8 @@ namespace Presentation.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("default");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -69,6 +75,7 @@ namespace Presentation.API
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
+
         }
     }
 }

@@ -14,13 +14,11 @@ namespace DAL.Repositories
         {
         }
 
-        async Task<List<Prestamo>> IPrestamoRepository.ByClienteID(List<int> ids)
+        async Task<List<Prestamo>> IPrestamoRepository.ByClienteID()
         {
             try
             {
-                Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@ClienteID", String.Join(",",ids));
-                var res = await Query<Prestamo>("select * from prestamo where ClienteID in(@ClienteID)", param);
+                var res = await Query<Prestamo>("select * from prestamo", null);
                 return res;
             }
             catch (Exception ex)

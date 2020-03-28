@@ -17,11 +17,11 @@ namespace Domain.Services
             _prestamoRepo = prestamoRepo;
         }
 
-        Task<List<Prestamo>> IPrestamoService.ByClienteID(List<int> ids)
+        Task<List<Prestamo>> IPrestamoService.ByClienteID()
         {
             try
             {
-                var res = _prestamoRepo.ByClienteID(ids);
+                var res = _prestamoRepo.ByClienteID();
                 return res;
             }
             catch (Exception ex)
