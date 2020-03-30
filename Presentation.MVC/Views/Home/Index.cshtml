@@ -43,8 +43,16 @@
 
     <script>
         $(document).ready(async () => {
-            var res = await fetch("http://localhost:60472/Clientes/Get").then(x=>x.json());
-            console.log(res);
+
+            var url = new URL("http://localhost:60472/Clientes/GetUserWithDetails");
+
+            url.searchParams.set("ID", 2)
+
+            var res2 = await fetch(url.toString()).then(x=>x.json());
+
+            console.log(url.toString());
+
+            console.log(res2);
         });
     </script>
 
