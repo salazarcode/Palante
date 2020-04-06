@@ -7,8 +7,9 @@ namespace Domain.Contracts.Repositories
 {
     public interface IRepository<Entity> where Entity:class
     {
-        Task<List<Entity>> Get(int ID = 0);
         Task<int> Save(Entity entity);
         Task<int> Delete(int ID);
+        Task<List<Entity>> All();
+        Task<Entity> Find(int ID);
     }
 }

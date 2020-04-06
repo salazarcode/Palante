@@ -18,17 +18,23 @@ namespace Domain.Services
             _prestamoRepo = prestamoRepo;
         }
         
-        public async Task<List<Cliente>> Get(int ID = 0)
+        public async Task<List<Cliente>> GetAllUsers()
         {
-            List<Cliente> clientes = await _clienteRepo.Get(ID);
-            List<Prestamo> prestamos = await _prestamoRepo.ByClienteID();
+            List<Cliente> clientes = await _clienteRepo.All();
+            List<Prestamo> prestamos = await _prestamoRepo.All();
 
             clientes.ForEach(x => {
                 x.Prestamos = prestamos.Where(z => z.ClienteID == x.ID).ToList();
             });
 
             return clientes;
-        } 
+        }
+
+        public async Task<Cliente> GetUserWithDetails(int ID) {
+            Cliente cliente = await _clienteRepo.Find(ID);
+            cliente.Prestamos = await _prestamoRepo.ByClienteID(cliente.ID);
+            return cliente;
+        }
         
     }
 }

@@ -29,11 +29,38 @@ namespace Presentation.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("Get")]
-        public async Task<IEnumerable<Cliente>> Get(int ID = 0)
+        [Route("GetAllUsers")]
+        public async Task<IEnumerable<Cliente>> GetAllUsers()
         {
-            var res = await _clienteService.Get(ID);
-            return res;
+            try
+            {
+                var res = await _clienteService.GetAllUsers();
+                return res;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Listar un cliente con sus detalles
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetUserWithDetails")]
+        public async Task<Cliente> GetUserWithDetails(int ID)
+        {
+            try
+            {
+                var res = await _clienteService.GetUserWithDetails(ID);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

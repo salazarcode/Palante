@@ -8,6 +8,6 @@ namespace Domain.Contracts.Services
 {
     public interface IPrestamoService
     {
-        Task<List<Prestamo>> ByClienteID();
+        Task<List<Prestamo>> ByClienteID(int ID);
     }
 }

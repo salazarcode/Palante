@@ -5,6 +5,7 @@ using DAL.Abstractions;
 using System.Threading.Tasks;
 using Domain.Contracts.Repositories;
 using Domain.Entities;
+using System.Linq;
 
 namespace DAL.Repositories
 {
@@ -14,6 +15,22 @@ namespace DAL.Repositories
         public ClienteRepository(IConfiguration configuration, IPrestamoRepository prestamoRepo) : base(configuration)
         {
             _prestamoRepo = prestamoRepo;
+        }
+
+        async Task<List<Cliente>> IRepository<Cliente>.All()
+        {
+            try
+            {
+                string query = "select * from cliente";
+
+                var res = await Query<Cliente>(query, null);
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         async Task<int> IRepository<Cliente>.Delete(int ID)
@@ -31,21 +48,14 @@ namespace DAL.Repositories
             }
         }
 
-        async Task<List<Cliente>> IRepository<Cliente>.Get(int ID = 0)
+        async Task<Cliente> IRepository<Cliente>.Find(int ID)
         {
             try
             {
-                Dictionary<string, object> param = null;
-                if (ID != 0)
-                {
-                    param = new Dictionary<string, object>();
-                    param.Add("@ID", ID);
-                }
-
-                string query = "select * from cliente" + (ID != 0 ? " where ID = @ID" : "");
-
-                var res = await Query<Cliente>(query, param);
-                return res;
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@ID", ID);
+                var res = await Query<Cliente>("select * from cliente where ID = @ID", param);
+                return res.First();
             }
             catch (Exception ex)
             {

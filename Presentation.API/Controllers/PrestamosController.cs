@@ -31,7 +31,7 @@ namespace Presentation.API.Controllers
         [Route("Get")]
         public async Task<IEnumerable<Prestamo>> Get()
         {
-            var res = await _prestamoRepo.Get();
+            var res = await _prestamoRepo.All();
             return res;
         }
 
@@ -46,8 +46,8 @@ namespace Presentation.API.Controllers
         {
             try
             {
-                var res = await _prestamoRepo.Get(ID);
-                return res[0];
+                var res = await _prestamoRepo.Find(ID);
+                return res;
             }
             catch (Exception ex)
             {

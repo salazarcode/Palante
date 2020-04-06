@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Domain.Entities;
 using System;
+using System.Linq;
 
 namespace DAL.Repositories
 {
@@ -14,11 +15,29 @@ namespace DAL.Repositories
         {
         }
 
-        async Task<List<Prestamo>> IPrestamoRepository.ByClienteID()
+        async Task<List<Prestamo>> IRepository<Prestamo>.All()
         {
             try
             {
-                var res = await Query<Prestamo>("select * from prestamo", null);
+                string query = "select * from prestamo";
+
+                var res = await Query<Prestamo>(query, null);
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        async Task<List<Prestamo>> IPrestamoRepository.ByClienteID(int ClienteID)
+        {
+            try
+            {
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@ClienteID", ClienteID);
+                var res = await Query<Prestamo>("select * from prestamo where ClienteID = @ClienteID", param);
                 return res;
             }
             catch (Exception ex)
@@ -42,21 +61,14 @@ namespace DAL.Repositories
             }
         }
 
-        async Task<List<Prestamo>> IRepository<Prestamo>.Get(int ID = 0)
+        async Task<Prestamo> IRepository<Prestamo>.Find(int ID)
         {
             try
             {
-                Dictionary<string, object> param = null;
-                if (ID != 0)
-                {
-                    param = new Dictionary<string, object>();
-                    param.Add("@ID", ID);
-                }
-
-                string query = "select * from prestamo" + ( ID != 0 ? " where ID = @ID" : "" );
-                
-                var res = await Query<Prestamo>(query, param);
-                return res;
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@ID", ID);
+                var res = await Query<Prestamo>("select * from prestamo where ID = @ID", param);
+                return res.First();
             }
             catch (Exception ex)
             {

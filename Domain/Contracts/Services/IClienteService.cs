@@ -8,6 +8,7 @@ namespace Domain.Contracts.Services
 {
     public interface IClienteService
     {
-        Task<List<Cliente>> Get(int ID = 0);
+        Task<List<Cliente>> GetAllUsers();
+        Task<Cliente> GetUserWithDetails(int ID);
     }
 }

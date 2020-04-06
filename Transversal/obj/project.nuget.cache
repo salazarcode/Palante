@@ -1,8 +1,21 @@
 {
   "version": 2,
-  "dgSpecHash": "ys7bmVLRD5fkDDEBQz3f4A43Df2jFcCYxbWTenxhdwT5EsZJXtAPTcbqEbpl5NLlVxlNPLsbHuS+ai2b6o8umg==",
+  "dgSpecHash": "ujzjCZ5YRmZ4bWjJksC5lclQdfEWqjB5mZwo8Xyxku4OMc+gXqXLc46/kTTDF3Xnc0VqJCrz6nSIfsKwUFwGfg==",
   "success": true,
   "projectFilePath": "C:\\Users\\USUARIO\\source\\repos\\Presentation.API\\Transversal\\Transversal.csproj",
-  "expectedPackageFiles": [],
-  "logs": []
+  "expectedPackageFiles": [
+    "C:\\Users\\USUARIO\\.nuget\\packages\\microsoft.office.interop.excel\\15.0.4795.1000\\microsoft.office.interop.excel.15.0.4795.1000.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "El paquete \"Microsoft.Office.Interop.Excel 15.0.4795.1000\" se restauró con \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8\" en lugar de la plataforma de destino del proyecto \".NETCoreApp,Version=v3.1\". Puede que el paquete no sea totalmente compatible con el proyecto.",
+      "libraryId": "Microsoft.Office.Interop.Excel",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v3.1"
+      ]
+    }
+  ]
 }
