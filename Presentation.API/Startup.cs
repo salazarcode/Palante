@@ -32,11 +32,20 @@ namespace Presentation.API
             services.AddControllers();
 
             services.AddSingleton<IClienteRepository, ClienteRepository>();
-            services.AddSingleton<IPrestamoRepository, PrestamoRepository>();
+            services.AddSingleton<ICreditoRepository, CreditoRepository>();
+            services.AddSingleton<ICarteraRepository, CarteraRepository>();
+            services.AddSingleton<IFondeadorRepository, FondeadorRepository>();
             services.AddSingleton<IClienteService, ClienteService>();
+            services.AddSingleton<ICreditoService, CreditoService>();
+            services.AddSingleton<ICarteraService, CarteraService>();
+            services.AddSingleton<IFondeadorService, FondeadorService>();
 
             services.AddCors(options => {
-                options.AddPolicy("default", builder => builder.AllowAnyOrigin());
+                options.AddPolicy("default", builder => {
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyHeader();
+                });
             });
 
             OpenApiInfo info = new OpenApiInfo { 
@@ -53,7 +62,6 @@ namespace Presentation.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("default");
 
             if (env.IsDevelopment())
             {
@@ -62,6 +70,8 @@ namespace Presentation.API
 
             app.UseRouting();
             
+            app.UseCors("default");
+
             app.UseAuthorization();
             
             app.UseEndpoints(endpoints =>

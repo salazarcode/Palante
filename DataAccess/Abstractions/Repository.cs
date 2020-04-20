@@ -5,14 +5,14 @@ using System.Data.SqlClient;
 using System.Text;
 using Dapper;
 using System.Linq;
+using System.Data;
 
 namespace DAL.Abstractions
 {
     public abstract class Repository
     {
         private readonly IConfiguration _configuration;
-        private readonly string _connectionString;
-        protected readonly SqlConnection _conn;
+        protected readonly string _connectionString;
 
         public Repository(IConfiguration configuration)
         {
@@ -21,8 +21,6 @@ namespace DAL.Abstractions
             var enviroment = _configuration.GetSection("enviroment").Value;
 
             _connectionString = _configuration.GetConnectionString(enviroment);
-
-            _conn = new SqlConnection(_connectionString);
         }
     }
 }

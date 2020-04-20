@@ -6,9 +6,9 @@ BEGIN
 	)
 END
 
-IF (NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND  TABLE_NAME = 'prestamo'))
+IF (NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND  TABLE_NAME = 'Credito'))
 BEGIN
-	create table prestamo(
+	create table Credito(
 		ID int identity(1,1) primary key,
 		Capital float,
 		ClienteID int FOREIGN KEY REFERENCES cliente(ID)

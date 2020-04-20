@@ -1,11 +1,12 @@
 ﻿using Domain.Entities;
+using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Contracts.Repositories
 {
-    public interface IPrestamoRepository : IRepository<Prestamo>
+    public interface IFondeadorRepository : IRepository<Fondeador>
     {
-        Task<List<Prestamo>> ByClienteID(int ClienteID);
     }
 }

@@ -1,0 +1,9 @@
+C:\Users\USUARIO\source\repos\Presentation.API\Transversal\bin\Release\netcoreapp3.1\Transversal.deps.json
+C:\Users\USUARIO\source\repos\Presentation.API\Transversal\bin\Release\netcoreapp3.1\Transversal.dll
+C:\Users\USUARIO\source\repos\Presentation.API\Transversal\bin\Release\netcoreapp3.1\Transversal.pdb
+C:\Users\USUARIO\source\repos\Presentation.API\Transversal\obj\Release\netcoreapp3.1\Transversal.csprojAssemblyReference.cache
+C:\Users\USUARIO\source\repos\Presentation.API\Transversal\obj\Release\netcoreapp3.1\Transversal.csproj.CoreCompileInputs.cache
+C:\Users\USUARIO\source\repos\Presentation.API\Transversal\obj\Release\netcoreapp3.1\Transversal.AssemblyInfoInputs.cache
+C:\Users\USUARIO\source\repos\Presentation.API\Transversal\obj\Release\netcoreapp3.1\Transversal.AssemblyInfo.cs
+C:\Users\USUARIO\source\repos\Presentation.API\Transversal\obj\Release\netcoreapp3.1\Transversal.dll
+C:\Users\USUARIO\source\repos\Presentation.API\Transversal\obj\Release\netcoreapp3.1\Transversal.pdb

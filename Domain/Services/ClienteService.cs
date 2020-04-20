@@ -11,30 +11,25 @@ namespace Domain.Services
     public class ClienteService : IClienteService
     {
         private readonly IClienteRepository _clienteRepo;
-        private readonly IPrestamoRepository _prestamoRepo;
-        public ClienteService(IClienteRepository clienteRepo, IPrestamoRepository prestamoRepo)
+        private readonly ICreditoRepository _CreditoRepo;
+        public ClienteService(IClienteRepository clienteRepo, ICreditoRepository CreditoRepo)
         {
             _clienteRepo = clienteRepo;
-            _prestamoRepo = prestamoRepo;
+            _CreditoRepo = CreditoRepo;
         }
         
-        public async Task<List<Cliente>> GetAllUsers()
+        public async Task<List<Cliente>> All()
         {
             List<Cliente> clientes = await _clienteRepo.All();
-            List<Prestamo> prestamos = await _prestamoRepo.All();
-
-            clientes.ForEach(x => {
-                x.Prestamos = prestamos.Where(z => z.ClienteID == x.ID).ToList();
-            });
 
             return clientes;
         }
-
-        public async Task<Cliente> GetUserWithDetails(int ID) {
+        
+        public async Task<Cliente> Find(int ID) {
             Cliente cliente = await _clienteRepo.Find(ID);
-            cliente.Prestamos = await _prestamoRepo.ByClienteID(cliente.ID);
             return cliente;
         }
+        
         
     }
 }

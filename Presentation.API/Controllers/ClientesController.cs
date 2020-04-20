@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Dapper;
 using System.Data.SqlClient;
 using Domain.Entities;
 using Domain.Contracts.Repositories;
@@ -14,7 +13,7 @@ using Domain.Contracts.Services;
 namespace Presentation.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ClientesController : ControllerBase
     {
         private readonly IClienteService _clienteService;
@@ -29,12 +28,12 @@ namespace Presentation.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("GetAllUsers")]
-        public async Task<IEnumerable<Cliente>> GetAllUsers()
+        [Route("All")]
+        public async Task<IEnumerable<Cliente>> All()
         {
             try
             {
-                var res = await _clienteService.GetAllUsers();
+                var res = await _clienteService.All();
                 return res;
             }
             catch (Exception ex)
@@ -43,18 +42,18 @@ namespace Presentation.API.Controllers
                 throw ex;
             }
         }
-
+        /*
         /// <summary>
         /// Listar un cliente con sus detalles
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("GetUserWithDetails")]
-        public async Task<Cliente> GetUserWithDetails(int ID)
+        [Route("Find")]
+        public async Task<Cliente> Find(int ID)
         {
             try
             {
-                var res = await _clienteService.GetUserWithDetails(ID);
+                var res = await _clienteService.Find(ID);
                 return res;
             }
             catch (Exception ex)
@@ -62,5 +61,6 @@ namespace Presentation.API.Controllers
                 throw ex;
             }
         }
+        */
     }
 }

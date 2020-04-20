@@ -11,17 +11,17 @@ namespace DAL.Repositories
 {
     public class ClienteRepository : SuperRepository, IClienteRepository
     {
-        private readonly IPrestamoRepository _prestamoRepo;
-        public ClienteRepository(IConfiguration configuration, IPrestamoRepository prestamoRepo) : base(configuration)
+        private readonly ICreditoRepository _CreditoRepo;
+        public ClienteRepository(IConfiguration configuration, ICreditoRepository CreditoRepo) : base(configuration)
         {
-            _prestamoRepo = prestamoRepo;
+            _CreditoRepo = CreditoRepo;
         }
 
         async Task<List<Cliente>> IRepository<Cliente>.All()
         {
             try
             {
-                string query = "select * from cliente";
+                string query = "select top 100 * from cl_cliente";
 
                 var res = await Query<Cliente>(query, null);
 
@@ -66,7 +66,7 @@ namespace DAL.Repositories
         async Task<int> IRepository<Cliente>.Save(Cliente entity)
         {
             Dictionary<string, object> param = new Dictionary<string, object>();
-
+            /*
             try
             {
                 if (entity.ID != 0)
@@ -84,6 +84,8 @@ namespace DAL.Repositories
             {
                 throw ex;
             }
+            */
+            return 1;
         }
     }
 }

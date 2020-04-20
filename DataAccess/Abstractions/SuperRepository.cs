@@ -19,8 +19,11 @@ namespace DAL.Abstractions
         {
             try
             {
-                var res = await _conn.QueryAsync<Entity>(sql, new DynamicParameters(parameters));
-                return res.ToList();
+                using (var conn = new SqlConnection(_connectionString))
+                {
+                    var res = await conn.QueryAsync<Entity>(sql, new DynamicParameters(parameters));
+                    return res.ToList();
+                }
             }
             catch (Exception ex)
             {
@@ -32,8 +35,11 @@ namespace DAL.Abstractions
         {
             try
             {
-                var res = await _conn.ExecuteAsync(sql, new DynamicParameters(parameters));
-                return res;
+                using (var conn = new SqlConnection(_connectionString))
+                {
+                    var res = await conn.ExecuteAsync(sql, new DynamicParameters(parameters));
+                    return res;
+                }
             }
             catch (Exception ex)
             {
