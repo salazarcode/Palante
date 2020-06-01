@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
+using Domain.ValueObjects;
 
 namespace Domain.Services
 {
@@ -17,13 +18,13 @@ namespace Domain.Services
             _CreditoRepo = CreditoRepo;
         }
 
-        async Task<List<Credito>> ICreditoService.All()
+        async Task<List<Credito>> ICreditoService.All(Paginacion pag = null)
         {
             try
             {
 
-            var res = await _CreditoRepo.All();
-            return res;
+                var res = await _CreditoRepo.All(pag);
+                return res;
             }
             catch (Exception ex)
             {
@@ -31,18 +32,22 @@ namespace Domain.Services
                 throw ex;
             }
         }
-
-        async Task<List<Credito>> ICreditoService.ByClienteID(int ID)
+        async Task<List<Credito>> ICreditoService.Cumplimiento(int FondeadorID, string creditos)
         {
-            var res = await _CreditoRepo.All();
-            var Creditos = res.FindAll(x => x.nCodCred == ID);
-            return Creditos;
-        }
-
-        async Task<List<Credito>> ICreditoService.Cumplimiento(int FondeadorID)
-        {
-            var res = await _CreditoRepo.Cumplimiento(FondeadorID);
+            var res = await _CreditoRepo.Cumplimiento(FondeadorID, creditos);
             return res;
+        }
+        public async Task<List<Credito>> Search(CreditoSearch search)
+        {
+            try
+            {
+                var res = await _CreditoRepo.Search(search);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
     }
 }

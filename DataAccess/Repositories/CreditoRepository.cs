@@ -8,6 +8,8 @@ using System;
 using System.Linq;
 using Dapper;
 using Dapper.Mapper;
+using System.Data.SqlClient;
+using Domain.ValueObjects;
 
 namespace DAL.Repositories
 {
@@ -17,12 +19,58 @@ namespace DAL.Repositories
         {
         }
 
-        async Task<List<Credito>> IRepository<Credito>.All()
+        async Task<List<Credito>> IRepository<Credito>.All(Paginacion paginacion)
         {
             try
             {
-                string query = "select * from creditos where nEstado = 1 ";
-                var res = await Query<Credito>(query, null);
+                string sp = paginacion.repro ? "GetCreditosPaginadosRepro" : "GetCreditosPaginados";
+                string query = "exec dbo." + sp + " @page, @pagesize, @producto";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@page", paginacion.page);
+                param.Add("@pagesize", paginacion.pagesize);
+                param.Add("@producto", paginacion.producto);
+
+                using var conn = new SqlConnection(_connectionString);
+                var list = await conn.QueryAsync<Credito, Producto, Credito>(
+                    query,
+                    (credito, producto) =>
+                    {
+                        credito.Producto = producto;
+                        return credito;
+                    },
+                    param,
+                    splitOn: "nCodCred,nCodigo");
+                var res = list.Distinct().ToList();
+
+                res.ForEach(ele => {
+                    var n = ele.Producto.nValor;
+                    if (n == 9 || n == 8 || n == 7 || n == 6 || n == 2)
+                    {
+                        ele.Producto.cNomCod = "YAPAMOTORS";
+                        ele.Producto.nValor = 2;
+                    }
+                });
+
+                return list.Distinct().ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Credito>> Cumplimiento(int FondeadorID, string creditos)
+        {
+            try
+            {
+                string query = "exec dbo.EvaluaCreditos @FondeadorID, @creditos";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@FondeadorID", FondeadorID);
+                param.Add("@creditos", creditos);
+
+                var res = await Query<Credito>(query, param);
 
                 return res.ToList();
             }
@@ -31,58 +79,44 @@ namespace DAL.Repositories
                 throw ex;
             }
         }
-
-        async Task<List<Credito>> ICreditoRepository.ByClienteID(int ClienteID)
-        {
-            try
-            {
-                string query = @"
-                                select * 
-                                from creditos c
-                                inner join CredPersonas cp on cp.nCodCred = c.nCodCred
-                                where 
-	                                cp.nCodPers = @ClienteID
-	                                and cp.nRelacion = 10";
-
-                Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@ClienteID", ClienteID);
-
-                var res = await Query<Credito>(query, param);
-                return res;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        Task<int> IRepository<Credito>.Delete(int ID)
+        //---------------------------------------
+        Task<int> IRepository<Credito>.Save(Credito entity)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<Credito>> Cumplimiento(int FondeadorID)
+        public async Task<List<Credito>> Search(CreditoSearch search)
         {
             try
             {
-                string query = "exec VentaCartera.EvaluaCreditos " + FondeadorID;
-                var res = await Query<Credito>(query, null);
+                string q = "exec dbo.FindCredito @tipo, @q";
 
-                return res.ToList();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-        async Task<Credito> IRepository<Credito>.Find(int ID)
-        {
-            try
-            {
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@ID", ID);
-                var res = await Query<Credito>("select * from Credito where nCodCred = @ID", param);
-                return res.First();
+                param.Add("@tipo", search.Tipo);
+                param.Add("@q", search.Query);
+
+                using var conn = new SqlConnection(_connectionString);
+                var list = await conn.QueryAsync<Credito, Producto, Credito>(
+                    q,
+                    (credito, producto) =>
+                    {
+                        credito.Producto = producto;
+                        return credito;
+                    },
+                    param,
+                    splitOn: "nCodigo");
+                var res = list.Distinct().ToList();
+
+                res.ForEach(ele => {
+                    var n = ele.Producto.nValor;
+                    if (n == 9 || n == 8 || n == 7 || n == 6 || n == 2)
+                    {
+                        ele.Producto.cNomCod = "YAPAMOTORS";
+                        ele.Producto.nValor = 2;
+                    }
+                });
+
+                return list.Distinct().ToList();
             }
             catch (Exception ex)
             {
@@ -90,7 +124,12 @@ namespace DAL.Repositories
             }
         }
 
-        Task<int> IRepository<Credito>.Save(Credito entity)
+        public Task<int> Delete(Credito entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Credito>> Find(Credito credito)
         {
             throw new NotImplementedException();
         }

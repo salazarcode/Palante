@@ -3,21 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presentation.API", "Presentation.API\Presentation.API.csproj", "{BE318BD3-988B-4A0D-8E77-9A6A3F4D3628}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GestionCartera.API", "Presentation.API\GestionCartera.API.csproj", "{BE318BD3-988B-4A0D-8E77-9A6A3F4D3628}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Presentation", "3. Presentation", "{858B836F-A815-49CE-8FC5-FC1CA319EC03}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0. Scripts", "0. Scripts", "{2E4573CB-E8F7-4637-9899-A75EB36EA5F6}"
 	ProjectSection(SolutionItems) = preProject
-		mockdata.sql = mockdata.sql
-		Tables.sql = Tables.sql
+		Data.sql = Data.sql
+		Functions.sql = Functions.sql
+		Procedures.sql = Procedures.sql
+		Schema.sql = Schema.sql
+		TablesViews.sql = TablesViews.sql
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Persistence", "2. Persistence", "{EF7ACF8B-182F-4222-A34B-30FE4C60BB8B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Persistence", "1. Persistence", "{EF7ACF8B-182F-4222-A34B-30FE4C60BB8B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DataAccess\DAL.csproj", "{90C32DE5-B507-45CC-B4F1-535343B93456}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Domain", "1. Domain", "{546E9C0B-2687-4B34-8F38-07FEF6A0EAEB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Business", "2. Business", "{546E9C0B-2687-4B34-8F38-07FEF6A0EAEB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5. Tranversal", "5. Tranversal", "{46BE8D8C-9337-400A-8B7C-4B30BD8FA3FF}"
 EndProject

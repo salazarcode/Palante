@@ -7,7 +7,7 @@ using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Presentation.API.Controllers
+namespace GestionCartera.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

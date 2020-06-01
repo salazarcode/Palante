@@ -18,24 +18,29 @@ namespace DAL.Repositories
         {
         }
 
-        async Task<List<Cartera>> IRepository<Cartera>.All()
+        async Task<List<Cartera>> IRepository<Cartera>.All(Paginacion paginacion = null)
         {
             try
             {
-                string query = "select * from ventacartera.Carteras c inner join ventacartera.Fondeadores f on c.FondeadorID = f.FondeadorID";
+                string query = @"dbo.GetCarteras @ProductoID";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@ProductoID", paginacion.producto);
+
 
                 using var conn = new SqlConnection(_connectionString);
-                var res = await conn.QueryAsync<Cartera, Fondeador, Cartera>(
-                    query, 
-                    (c, f) => 
+                var list = await conn.QueryAsync<Cartera, Fondeador, Producto, Cartera>(
+                    query,
+                    (cartera, fondeador, producto) =>
                     {
-                        c.Fondeador = f;
-                        return c;
+                        cartera.Fondeador = fondeador;
+                        cartera.Producto = producto;
+                        return cartera;
                     },
-                    splitOn: "FondeadorID"
-                );
+                    param,
+                    splitOn: "FondeadorID,nCodigo");
 
-                return res.ToList();
+                return list.Distinct().ToList();
             }
             catch (Exception ex)
             {
@@ -43,29 +48,35 @@ namespace DAL.Repositories
             }
         }
 
-        Task<int> IRepository<Cartera>.Delete(int ID)
+        async Task<int> IRepository<Cartera>.Delete(Cartera cartera)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string query = "exec [EliminarCartera] @CarteraID";
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@CarteraID", cartera.CarteraID);
+
+                var res = await Execute(query, param);
+
+                return res;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        async Task<Cartera> IRepository<Cartera>.Find(int CarteraID)
+        async Task<List<Cartera>> IRepository<Cartera>.Find(Cartera cartera)
         {
 
             try
             {
-                string query = @"
-                    select c.*, cred.*, f.* 
-                    from 
-                        ventacartera.Carteras c 
-                        inner join ventacartera.Fondeadores f on c.FondeadorID = f.FondeadorID
-	                    left outer join ventacartera.CarteraCredito cc on c.CarteraId = cc.CarteraId
-	                    left outer join Creditos cred on cred.nCodCred = cc.nCodCred	
-                    where 
-                        c.CarteraID = @CarteraID
-                    ";
+                string query = @"dbo.FindCartera @CarteraID, @ProductoID";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@CarteraID", CarteraID);
+                param.Add("@CarteraID", cartera.CarteraID);
+                param.Add("@ProductoID", cartera.ProductoID);
 
                 var orderDictionary = new Dictionary<int, Cartera>();
 
@@ -91,7 +102,7 @@ namespace DAL.Repositories
                     param,
                     splitOn: "nCodCred,FondeadorID");
 
-                return list.Distinct().ToList().First();
+                return list.Distinct().ToList();
             }
             catch (Exception ex)
             {
@@ -109,32 +120,27 @@ namespace DAL.Repositories
 
                 if (entity.CarteraID == 0)
                 {
-                    string query = "exec [VentaCartera].[CrearCartera] @CreadoPor, @Fondeadora, @creditos";
+                    string query = "exec [CrearCartera] @FondeadorID, @ProductoID, @CreadoPor, @creditos";
 
                     Dictionary<string, object> param = new Dictionary<string, object>();
+                    param.Add("@FondeadorID", Fondeador);
+                    param.Add("@ProductoID", entity.ProductoID);
                     param.Add("@CreadoPor", CreadoPor);
-                    param.Add("@Fondeadora", Fondeador);
                     param.Add("@creditos", creditos);
 
-                    var res = await Execute(query, param);
+                    var res = await Query<int>(query, param);
 
-                    return res;
+                    return res.First();
                 }
                 else
                 {
-                    string query = @"
-                            update 
-                                VentaCartera.Carteras 
-                            set 
-                                FondeadorID = @FondeadorID,
-                                Modificado = @Modificado, 
-                            where 
-                                CarteraID = @CarteraID";
+                    string query = @"exec EditarCartera @CarteraID, @ProductoID, @FondeadorID, @creditos";
 
                     Dictionary<string, object> param = new Dictionary<string, object>();
                     param.Add("@CarteraID", entity.CarteraID);
+                    param.Add("@ProductoID", entity.ProductoID);
                     param.Add("@FondeadorID", entity.Fondeador.FondeadorID);
-                    param.Add("@Modificado", DateTime.Now);
+                    param.Add("@creditos", creditos);
 
                     var res = await Execute(query, param);
 
@@ -146,33 +152,16 @@ namespace DAL.Repositories
                 throw ex;
             }
         }
-        public async Task<int> Add(int CarteraID, int CreditoID)
+
+        async Task<int> ICarteraRepository.Add(int CarteraID, int ProductoID, int CreditoID)
         {
             try
             {
-                string query = "insert into VentaCartera.CarteraCredito values(@CarteraID, @CreditoID)";
+                string query = "insert into CarteraCredito values(@CarteraID, @ProductoID, @CreditoID, 0)";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
                 param.Add("@CarteraID", CarteraID);
-                param.Add("@CreditoID", CreditoID);
-
-                var res = await Execute(query, param);
-
-                return res;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-        public async Task<int> Remove(int CarteraID, int CreditoID)
-        {
-            try
-            {
-                string query = "delete from VentaCartera.CarteraCredito where CarteraID = @CarteraID and nCodCred = @CreditoID)";
-
-                Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@CarteraID", CarteraID);
+                param.Add("@ProductoID", CarteraID);
                 param.Add("@CreditoID", CreditoID);
 
                 var res = await Execute(query, param);
@@ -185,6 +174,46 @@ namespace DAL.Repositories
             }
         }
 
+        async Task<int> ICarteraRepository.Remove(int CarteraID, int ProductoID, int CreditoID)
+        {
+            try
+            {
+                string query = "delete from CarteraCredito where CarteraID = @CarteraID and ProductoID = @ProductoID and nCodCred = @CreditoID";
 
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@CarteraID", CarteraID);
+                param.Add("@ProductoID", ProductoID);
+                param.Add("@CreditoID", CreditoID);
+
+                var res = await Execute(query, param);
+
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        async Task<int> ICarteraRepository.Cerrar(int CarteraID, int ProductoID, DateTime FechaCierre)
+        {
+            try
+            {
+                string query = "exec CerrarCartera @CarteraID, @ProductoID, @FechaCierre";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@CarteraID", CarteraID);
+                param.Add("@ProductoID", ProductoID);
+                param.Add("@FechaCierre", FechaCierre);
+
+                var res = await Execute(query, param);
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

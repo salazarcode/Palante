@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,8 +9,8 @@ namespace Domain.Contracts.Services
 {
     public interface ICreditoService
     {
-        Task<List<Credito>> All();
-        Task<List<Credito>> ByClienteID(int ID);
-        Task<List<Credito>> Cumplimiento(int FondeadorID);
+        Task<List<Credito>> All(Paginacion pag = null);
+        Task<List<Credito>> Cumplimiento(int FondeadorID, string creditos);
+        Task<List<Credito>> Search(CreditoSearch search);
     }
 }

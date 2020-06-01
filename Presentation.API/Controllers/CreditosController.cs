@@ -9,8 +9,9 @@ using System.Data.SqlClient;
 using Domain.Contracts.Repositories;
 using Domain.Entities;
 using Domain.Contracts.Services;
+using Domain.ValueObjects;
 
-namespace Presentation.API.Controllers
+namespace GestionCartera.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -27,11 +28,11 @@ namespace Presentation.API.Controllers
         /// Listar todos los Creditos
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("All")]
-        public async Task<IEnumerable<Credito>> All()
+        public async Task<IEnumerable<Credito>> All([FromForm] Paginacion paginacion)
         {
-            var res = await _CreditoService.All();
+            var res = await _CreditoService.All(paginacion);
             return res;
         }
 
@@ -39,11 +40,23 @@ namespace Presentation.API.Controllers
         /// Listar todos los Creditos
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("Cumplimiento")]
-        public async Task<IEnumerable<Credito>> Cumplimiento(int FondeadorID)
+        public async Task<IEnumerable<Credito>> Cumplimiento([FromForm] int FondeadorID, [FromForm] string creditos)
         {
-            var res = await _CreditoService.Cumplimiento(FondeadorID);
+            var res = await _CreditoService.Cumplimiento(FondeadorID, creditos);
+            return res;
+        }
+
+        /// <summary>
+        /// Search
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Search")]
+        public async Task<IEnumerable<Credito>> Search([FromForm] CreditoSearch param)
+        {
+            var res = await _CreditoService.Search(param);
             return res;
         }
     }

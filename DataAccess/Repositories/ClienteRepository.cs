@@ -17,75 +17,24 @@ namespace DAL.Repositories
             _CreditoRepo = CreditoRepo;
         }
 
-        async Task<List<Cliente>> IRepository<Cliente>.All()
+        public Task<List<Cliente>> Find(Cliente cliente)
         {
-            try
-            {
-                string query = "select top 100 * from cl_cliente";
-
-                var res = await Query<Cliente>(query, null);
-
-                return res;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            throw new NotImplementedException();
         }
 
-        async Task<int> IRepository<Cliente>.Delete(int ID)
+        async Task<List<Cliente>> IRepository<Cliente>.All(Paginacion pag = null)
         {
-            try
-            {
-                Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@ID", ID);
-                var res = await Execute("delete from cliente where ID = @ID", param);
-                return res;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            throw new NotImplementedException();
         }
 
-        async Task<Cliente> IRepository<Cliente>.Find(int ID)
+        async Task<int> IRepository<Cliente>.Delete(Cliente cliente)
         {
-            try
-            {
-                Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@ID", ID);
-                var res = await Query<Cliente>("select * from cliente where ID = @ID", param);
-                return res.First();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            throw new NotImplementedException();
         }
 
         async Task<int> IRepository<Cliente>.Save(Cliente entity)
         {
-            Dictionary<string, object> param = new Dictionary<string, object>();
-            /*
-            try
-            {
-                if (entity.ID != 0)
-                    param.Add("@ID", entity.ID);
-
-                param.Add("@Nombres", entity.Nombres);
-
-                string queryInsert = "insert into cliente values(@Nombres); select @@identity;";
-                string queryUpdate = "update cliente set nombres = @Nombres where ID = @ID; select @@identity;";
-
-                var res = await Execute(entity.ID != 0 ? queryUpdate : queryInsert, param);
-                return res;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            */
-            return 1;
+            throw new NotImplementedException();
         }
     }
 }

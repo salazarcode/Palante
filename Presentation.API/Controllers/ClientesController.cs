@@ -10,7 +10,7 @@ using Domain.Entities;
 using Domain.Contracts.Repositories;
 using Domain.Contracts.Services;
 
-namespace Presentation.API.Controllers
+namespace GestionCartera.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

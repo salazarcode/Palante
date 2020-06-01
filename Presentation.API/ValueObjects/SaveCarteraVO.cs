@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 
 
-namespace Presentation.API.ValueObjects
+namespace GestionCartera.API.ValueObjects
 {
     public class SaveCarteraVO
     {
         public int CarteraID { get; set; }
         public int FondeadorID { get; set; }
         public string Creditos { get; set; }
+        public int ProductoID { get; set; }
     }
 }

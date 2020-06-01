@@ -26,10 +26,8 @@ namespace Domain.Services
         }
         
         public async Task<Cliente> Find(int ID) {
-            Cliente cliente = await _clienteRepo.Find(ID);
-            return cliente;
+            var clientes = await _clienteRepo.Find(new Cliente() { cli_id = ID });
+            return clientes.First();
         }
-        
-        
     }
 }

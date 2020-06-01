@@ -16,11 +16,11 @@ namespace DAL.Repositories
         public FondeadorRepository(IConfiguration configuration) : base(configuration)
         {
         }
-        async Task<List<Fondeador>> IRepository<Fondeador>.All()
-        {
+        async Task<List<Fondeador>> IRepository<Fondeador>.All(Paginacion pag = null)
+        { 
             try
             {
-                string query = "select * from ventacartera.fondeadores";
+                string query = "select * from fondeadores";
                 var res = await Query<Fondeador>(query, null);
 
                 return res.ToList();
@@ -31,14 +31,14 @@ namespace DAL.Repositories
             }
         }
 
-        async Task<int> IRepository<Fondeador>.Delete(int ID)
+        async Task<int> IRepository<Fondeador>.Delete(Fondeador f)
         {
             try
             {
-                string query = "delete from VentaCartera.Fondeadores where FondeadorID = @ID";
+                string query = "delete from Fondeadores where FondeadorID = @ID";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@ID", ID);
+                param.Add("@ID", f.FondeadorID);
 
                 var res = await Execute(query, param);
 
@@ -50,18 +50,18 @@ namespace DAL.Repositories
             }
         }
 
-        async Task<Fondeador> IRepository<Fondeador>.Find(int FondeadorID)
+        async Task<List<Fondeador>> IRepository<Fondeador>.Find(Fondeador f)
         {
             try
             {
-                string query = "select * from ventacartera.fondeadores where FondeadorID = @FondeadorID";
+                string query = "select * from fondeadores where FondeadorID = convert(int,@FondeadorID)";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@FondeadorID", FondeadorID);
+                param.Add("@FondeadorID", f.FondeadorID);
 
                 var res = await Query<Fondeador>(query, param);
 
-                return res.ToList().First();
+                return res.ToList();
             }
             catch (Exception ex)
             {
@@ -75,7 +75,7 @@ namespace DAL.Repositories
             {
                 if (entity.FondeadorID == 0)
                 {
-                        string query = "insert into VentaCartera.Fondeadores values(@Nombre, @Color, @Evaluador)";
+                        string query = "insert into Fondeadores values(@Nombre, @Color, @Evaluador)";
 
                         Dictionary<string, object> param = new Dictionary<string, object>();
                         param.Add("@Nombre", entity.Nombre);
@@ -88,7 +88,7 @@ namespace DAL.Repositories
                 }
                 else
                 {
-                    string query = "update VentaCartera.Fondeadores set Nombre = @Nombre, Color = @Color, Evaluador = @Evaluador where FondeadorID = @FondeadorID";
+                    string query = "update Fondeadores set Nombre = @Nombre, Color = @Color, Evaluador = @Evaluador where FondeadorID = @FondeadorID";
 
                     Dictionary<string, object> param = new Dictionary<string, object>();
                     param.Add("@FondeadorID", entity.FondeadorID);

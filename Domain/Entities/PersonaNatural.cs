@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Domain.Entities
 {
-    public class PersonaNatural : Persona
+    public class PersonaNatural : Persona, IPersona
     {
         public string cApePat { get; set; }
         public string cApeMat { get; set; }

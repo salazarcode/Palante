@@ -34,8 +34,8 @@ namespace Domain.Services
         {
             try
             {
-                var res = await _FondeadorRepo.Find(FondeadorID);
-                return res;
+                var res = await _FondeadorRepo.Find(new Fondeador() { FondeadorID = FondeadorID });
+                return res.First();
             }
             catch (Exception e)
             {
@@ -60,7 +60,7 @@ namespace Domain.Services
         {
             try
             {
-                var res = await _FondeadorRepo.Delete(FondeadorID);
+                var res = await _FondeadorRepo.Delete(new Fondeador() { FondeadorID = FondeadorID });
                 return res;
             }
             catch (Exception e)

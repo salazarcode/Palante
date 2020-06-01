@@ -15,7 +15,7 @@ using Domain.Contracts.Repositories;
 using Domain.Contracts.Services;
 using Domain.Services;
 
-namespace Presentation.API
+namespace GestionCartera.API
 {
     public class Startup
     {
@@ -35,10 +35,23 @@ namespace Presentation.API
             services.AddSingleton<ICreditoRepository, CreditoRepository>();
             services.AddSingleton<ICarteraRepository, CarteraRepository>();
             services.AddSingleton<IFondeadorRepository, FondeadorRepository>();
+            services.AddSingleton<IUsuarioRepository, UsuarioRepository>();
+            services.AddSingleton<IReporteRepository, ReporteRepository>();
+            services.AddSingleton<IProductoRepository, ProductoRepository>();
+            services.AddSingleton<IRecompraRepository,  RecompraRepository>();
+            services.AddSingleton<IPagoRepository,      PagoRepository>();
+            services.AddSingleton<ICuotaRepository,     CuotaRepository>();
+
             services.AddSingleton<IClienteService, ClienteService>();
             services.AddSingleton<ICreditoService, CreditoService>();
             services.AddSingleton<ICarteraService, CarteraService>();
             services.AddSingleton<IFondeadorService, FondeadorService>();
+            services.AddSingleton<IUsuarioService, UsuarioService>();
+            services.AddSingleton<IReporteService, ReporteService>();
+            services.AddSingleton<IProductoService, ProductoService>();
+            services.AddSingleton<IRecompraService,  RecompraService>();
+            services.AddSingleton<IPagoService,  PagoService>();
+            services.AddSingleton<ICuotaService, CuotaService>();
 
             services.AddCors(options => {
                 options.AddPolicy("default", builder => {
@@ -49,7 +62,7 @@ namespace Presentation.API
             });
 
             OpenApiInfo info = new OpenApiInfo { 
-                Title = "Palante API", 
+                Title = "Gestión de Cartera. API", 
                 Version = "v1" 
             };
 
