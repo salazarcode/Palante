@@ -8,5 +8,6 @@ namespace Domain.ValueObjects
     {
         public string Tipo { get; set; }
         public string Query { get; set; }
+        public DateTime Fecha { get; set; }
     }
 }

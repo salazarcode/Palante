@@ -5,8 +5,9 @@ insert into usuarios values('Kelly Robles', 0,'krobles', '12345', null, getdate(
 insert into roles values('Administrador', getdate())
 insert into RolUsuario values(1, 1)
 
+
 --crear una cartera normal
-exec dbo.CrearCartera 1, 2, 'krobles', '123529'
+exec dbo.CrearCartera 1, 2, 'krobles', '123529';
 
 --crear cartera de reprogramados
 DECLARE @Result VARCHAR(MAX);

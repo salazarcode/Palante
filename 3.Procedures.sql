@@ -898,7 +898,8 @@ if object_id('FindCredito') is not null
 go
 create procedure [dbo].[FindCredito]
 	@tipo nvarchar(10),
-	@q nvarchar(max)
+	@q nvarchar(max),
+	@fecha datetime
 as
 if @tipo = 'credito' 
 		select
@@ -934,7 +935,7 @@ if @tipo = 'credito'
 					) neo on neo.nCodCred = cro.ncodcred
 				where
 					cro.nnroCalendario = neo.topCalendario
-					and ((year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate())) or year(cro.dFecVcto) > year(getdate()))
+					and ((year(cro.dFecVcto) = year(@fecha) and month(cro.dFecVcto) > month(@fecha)) or year(cro.dFecVcto) > year(@fecha))
 				group by 
 					cro.nCodCred
 			) beta on beta.nCodCred = c.nCodCred
@@ -977,7 +978,7 @@ if @tipo = 'dni'
 					) neo on neo.nCodCred = cro.ncodcred
 				where 
 					cro.nnroCalendario = neo.topCalendario
-					and ((year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate())) or year(cro.dFecVcto) > year(getdate()))
+					and ((year(cro.dFecVcto) = year(@fecha) and month(cro.dFecVcto) > month(@fecha)) or year(cro.dFecVcto) > year(@fecha))
 				group by 
 					cro.nCodCred
 			) beta on beta.nCodCred = c.nCodCred
@@ -1020,7 +1021,7 @@ if @tipo = 'ruc'
 					) neo on neo.nCodCred = cro.ncodcred
 				where 
 					cro.nnroCalendario = neo.topCalendario
-					and ((year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate())) or year(cro.dFecVcto) > year(getdate()))
+					and ((year(cro.dFecVcto) = year(@fecha) and month(cro.dFecVcto) > month(@fecha)) or year(cro.dFecVcto) > year(@fecha))
 				group by 
 					cro.nCodCred
 			) beta on beta.nCodCred = c.nCodCred
@@ -1039,6 +1040,10 @@ create procedure dbo.FindCartera --363,2
 	@cartera int,
 	@producto int
 as
+declare @fecha datetime;
+
+select @fecha = Creado from carteras where CarteraID = @cartera and ProductoID = @producto;
+
 declare @table table(
 	CarteraID int,
 	ProductoID int,
@@ -1083,7 +1088,7 @@ from
 		where
 			cc.CarteraID = @cartera
 			and cc.ProductoID = @producto
-			and ( ( year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate()) ) or ( year(cro.dFecVcto) > year(getdate()) ) )
+			and ( ( year(cro.dFecVcto) = year(@fecha) and month(cro.dFecVcto) > month(@fecha) ) or ( year(cro.dFecVcto) > year(@fecha) ) )
 		group by 
 			cro.ncodcred
 	) a on a.ncodcred = cc.nCodCred
@@ -1109,7 +1114,7 @@ from
 	inner join @table a on a.creditoID = c.nCodCred
 where 
 	cc.carteraid = @cartera 
-	and cc.productoid = @producto 
+	and cc.productoid = @producto
 go
 
 if object_id('GetCarteras') is not null 
@@ -1138,7 +1143,7 @@ from
 	inner join credcronograma cro on cro.ncodcred = cc.nCodCred and cro.nNroCalendario = may.mayor 
 where 
 	ca.ProductoID = @producto
-	and (( year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate()) ) or year(cro.dFecVcto) > year(getdate()))
+	and (( year(cro.dFecVcto) = year(ca.Creado) and month(cro.dFecVcto) > month(ca.Creado) ) or year(cro.dFecVcto) > year(ca.Creado))
 group by 
 	ca.CarteraID
 

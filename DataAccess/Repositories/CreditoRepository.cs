@@ -89,11 +89,12 @@ namespace DAL.Repositories
         {
             try
             {
-                string q = "exec dbo.FindCredito @tipo, @q";
+                string q = "exec dbo.FindCredito @tipo, @q, @fecha";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
                 param.Add("@tipo", search.Tipo);
                 param.Add("@q", search.Query);
+                param.Add("@fecha", search.Fecha);
 
                 using var conn = new SqlConnection(_connectionString);
                 var list = await conn.QueryAsync<Credito, Producto, Credito>(
