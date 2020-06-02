@@ -557,7 +557,7 @@ GO
 if object_id('EvaluaCreditos') is not null 
 	drop procedure EvaluaCreditos;
 go
-CREATE procedure [EvaluaCreditos]
+CREATE procedure dbo.[EvaluaCreditos]
 	@FondeadorID int,
 	@creditos nvarchar(max)
 as

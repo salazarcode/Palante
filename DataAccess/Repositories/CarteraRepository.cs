@@ -100,7 +100,7 @@ namespace DAL.Repositories
                         return carteraEntry;
                     },
                     param,
-                    splitOn: "nCodCred,FondeadorID");
+                    splitOn: "creditoID,FondeadorID");
 
                 return list.Distinct().ToList();
             }
