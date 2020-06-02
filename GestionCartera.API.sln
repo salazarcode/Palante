@@ -9,11 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Presentation", "3. Prese
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0. Scripts", "0. Scripts", "{2E4573CB-E8F7-4637-9899-A75EB36EA5F6}"
 	ProjectSection(SolutionItems) = preProject
-		Data.sql = Data.sql
-		Functions.sql = Functions.sql
-		Procedures.sql = Procedures.sql
-		Schema.sql = Schema.sql
-		TablesViews.sql = TablesViews.sql
+		0.Schema.sql = 0.Schema.sql
+		1.TablesViews.sql = 1.TablesViews.sql
+		2.Functions.sql = 2.Functions.sql
+		3.Procedures.sql = 3.Procedures.sql
+		4.Data.sql = 4.Data.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Persistence", "1. Persistence", "{EF7ACF8B-182F-4222-A34B-30FE4C60BB8B}"

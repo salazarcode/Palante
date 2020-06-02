@@ -896,7 +896,7 @@ go
 if object_id('FindCredito') is not null 
 	drop procedure dbo.FindCredito;
 go
-create procedure dbo.FindCredito
+create procedure [dbo].[FindCredito]
 	@tipo nvarchar(10),
 	@q nvarchar(max)
 as
@@ -929,14 +929,12 @@ if @tipo = 'credito'
 							max(cro.nNroCalendario) topCalendario
 						from 
 							credcronograma cro
-						where 
-							((year(dFecVcto) = year(getdate()) and month(dFecVcto) > month(getdate())) or year(dFecVcto) > year(getdate()))
-							--and ncodcred = 119180
 						group by 
 							cro.ncodcred
 					) neo on neo.nCodCred = cro.ncodcred
 				where
 					cro.nnroCalendario = neo.topCalendario
+					and ((year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate())) or year(cro.dFecVcto) > year(getdate()))
 				group by 
 					cro.nCodCred
 			) beta on beta.nCodCred = c.nCodCred
@@ -974,14 +972,12 @@ if @tipo = 'dni'
 							max(cro.nNroCalendario) topCalendario
 						from 
 							credcronograma cro
-						where 
-							((year(dFecVcto) = year(getdate()) and month(dFecVcto) > month(getdate())) or year(dFecVcto) > year(getdate()))
-							--and ncodcred = 119180
 						group by 
 							cro.ncodcred
 					) neo on neo.nCodCred = cro.ncodcred
 				where 
 					cro.nnroCalendario = neo.topCalendario
+					and ((year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate())) or year(cro.dFecVcto) > year(getdate()))
 				group by 
 					cro.nCodCred
 			) beta on beta.nCodCred = c.nCodCred
@@ -1019,14 +1015,12 @@ if @tipo = 'ruc'
 							max(cro.nNroCalendario) topCalendario
 						from 
 							credcronograma cro
-						where 
-							((year(dFecVcto) = year(getdate()) and month(dFecVcto) > month(getdate())) or year(dFecVcto) > year(getdate()))
-							--and ncodcred = 119180
 						group by 
 							cro.ncodcred
 					) neo on neo.nCodCred = cro.ncodcred
 				where 
 					cro.nnroCalendario = neo.topCalendario
+					and ((year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate())) or year(cro.dFecVcto) > year(getdate()))
 				group by 
 					cro.nCodCred
 			) beta on beta.nCodCred = c.nCodCred
@@ -1087,8 +1081,8 @@ from
 				group by cro.ncodcred	
 			) my on my.ncodcred = cro.ncodcred and my.mayor = cro.nNroCalendario
 		where
-			cc.CarteraID = @carteraid
-			and cc.ProductoID = @ProductoID
+			cc.CarteraID = @cartera
+			and cc.ProductoID = @producto
 			and ( ( year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate()) ) or ( year(cro.dFecVcto) > year(getdate()) ) )
 		group by 
 			cro.ncodcred
@@ -1124,42 +1118,40 @@ go
 create procedure [dbo].[GetCarteras]
 	@producto int
 as
-declare @table table(
+declare @precios table(
 	CarteraID int,
-	ProductoID int,
-	Precio decimal(10,2)
+	precio float
 )
 
-insert into @table
+insert into @precios
 select 
-	car.CarteraId,
-	car.ProductoID,
-	sum(cro.nCapital) precio
+	ca.CarteraID,
+	sum(cro.ncapital) precio
 from 
-	Carteras car 
-	inner join CarteraCredito cc on cc.CarteraId = car.CarteraId
-	inner join CredCronograma cro on cro.nCodCred = cc.nCodCred
-where
-	( year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate()) )
-	or year(cro.dFecVcto) > year(getdate())			
+	carteras ca
+	inner join carteracredito cc on cc.CarteraId = ca.CarteraID and cc.ProductoID = ca.ProductoID
+	inner join (
+		select cro.ncodcred, max(nNroCalendario) mayor
+		from credcronograma cro
+		group by cro.nCodCred
+	) may on may.nCodcred = cc.nCodCred
+	inner join credcronograma cro on cro.ncodcred = cc.nCodCred and cro.nNroCalendario = may.mayor 
+where 
+	ca.ProductoID = @producto
+	and (( year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate()) ) or year(cro.dFecVcto) > year(getdate()))
 group by 
-	car.CarteraId, car.ProductoID
+	ca.CarteraID
 
 select 
 	ca.*,
-	a.Precio,
-	c.*,
+	pr.precio,
 	f.*,
-	cod.*
+	cod.*	
 from 
-	carteras ca
-	left join carteracredito cc on cc.CarteraId = ca.CarteraID and cc.ProductoID = ca.ProductoID
-	inner join creditos c on cc.nCodCred = c.ncodcred
-	inner join @table a on a.CarteraID = ca.CarteraId and a.ProductoID = ca.ProductoID
+	carteras ca 
+	inner join @precios pr on pr.CarteraID = ca.CarteraID
+	inner join Fondeadores f on f.FondeadorID = ca.FondeadorID
 	inner join CatalogoCodigos cod on ca.ProductoID = cod.nValor and cod.ncodigo = 4029
-	inner join fondeadores f on f.fondeadorID = ca.FondeadorID
-where
-	ca.ProductoID = @producto
 go
 
 
