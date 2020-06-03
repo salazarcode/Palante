@@ -88,7 +88,7 @@ namespace DAL.Repositories
         public async Task<List<Credito>> Search(CreditoSearch search)
         {
             try
-            {
+                {
                 string q = "exec dbo.FindCredito @tipo, @q, @fecha";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
