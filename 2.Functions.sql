@@ -1,7 +1,7 @@
 ﻿if object_id('CreditoDias') is not null 
 	drop function dbo.CreditoDias;
 go
-create function CreditoDias(@nCodCred int)
+create function dbo.CreditoDias(@nCodCred int)
 returns int as
 begin
 	declare @n int;
@@ -19,7 +19,7 @@ go
 if object_id('ObtenerPrecio') is not null 
 	drop function dbo.ObtenerPrecio;
 go
-create function ObtenerPrecio(@nCodCred int)
+create function dbo.ObtenerPrecio(@nCodCred int)
 returns float
 as
 begin
@@ -39,7 +39,7 @@ go
 if object_id('UltimoCalendario') is not null 
 	drop function dbo.UltimoCalendario;
 go
-create function UltimoCalendario(@nCodCred int)
+create function dbo.UltimoCalendario(@nCodCred int)
 returns int
 as
 begin
@@ -57,7 +57,7 @@ go
 if object_id('Capital') is not null 
 	drop function dbo.Capital;
 go
-create FUNCTION [Capital] (@CreditoID int)
+create FUNCTION dbo.[Capital] (@CreditoID int)
 RETURNS bit
 AS BEGIN
 	if(dbo.CreditoDias(@CreditoID) < 1825)
@@ -69,7 +69,7 @@ GO
 if object_id('EsRepro') is not null 
 	drop function dbo.EsRepro;
 go
-create FUNCTION [EsRepro] (@CreditoID int)
+create FUNCTION dbo.[EsRepro] (@CreditoID int)
 RETURNS bit
 AS BEGIN
 	declare @nTipoCrono int;
@@ -95,7 +95,7 @@ GO
 if object_id('CuantasRepro') is not null 
 	drop function dbo.CuantasRepro;
 go
-create FUNCTION CuantasRepro (@CreditoID int)
+create FUNCTION dbo.CuantasRepro (@CreditoID int)
 RETURNS bit
 AS BEGIN
 	declare @n int;
@@ -118,7 +118,7 @@ GO
 if object_id('Coopac') is not null 
 	drop function dbo.Coopac;
 go
-CREATE FUNCTION [Coopac] (@CreditoID int)
+CREATE FUNCTION dbo.[Coopac] (@CreditoID int)
 RETURNS bit
 AS 
 BEGIN
@@ -166,7 +166,7 @@ GO
 if object_id('Verificador') is not null 
 	drop function dbo.Verificador;
 go
-create function [Verificador] (@CreditoID int, @Funcion nvarchar(100))
+create function dbo.[Verificador] (@CreditoID int, @Funcion nvarchar(100))
 RETURNS bit
 AS BEGIN
 	declare @sql nvarchar(100) = N'select @res = ' + @Funcion + '(' + cast(@CreditoID as nvarchar(100)) + ')';
@@ -181,7 +181,7 @@ GO
 if object_id('split_string') is not null 
 	drop function dbo.split_string;
 go
-create function split_string( @in_string VARCHAR(MAX), @delimiter VARCHAR(1) )
+create function dbo.split_string( @in_string VARCHAR(MAX), @delimiter VARCHAR(1) )
 RETURNS @list TABLE(tuple VARCHAR(100))
 AS
 BEGIN

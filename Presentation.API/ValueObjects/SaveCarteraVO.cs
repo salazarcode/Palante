@@ -11,5 +11,6 @@ namespace GestionCartera.API.ValueObjects
         public int FondeadorID { get; set; }
         public string Creditos { get; set; }
         public int ProductoID { get; set; }
+        public DateTime Creado { get; set; }
     }
 }

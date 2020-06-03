@@ -323,7 +323,7 @@ GO
 if object_id('CerrarCartera') is not null 
 	drop procedure CerrarCartera;
 go
-CREATE procedure [CerrarCartera]
+CREATE procedure dbo.[CerrarCartera]
 	@CarteraID int,
 	@ProductoID int,
 	@FechaCierre DateTime
@@ -341,7 +341,7 @@ GO
 if object_id('CerrarPago') is not null 
 	drop procedure CerrarPago;
 go
-CREATE procedure [CerrarPago]
+CREATE procedure dbo.[CerrarPago]
 	@PagoID int,
 	@FechaCierre DateTime
 as
@@ -354,7 +354,7 @@ GO
 if object_id('CerrarRecompra') is not null 
 	drop procedure CerrarRecompra;
 go
-CREATE procedure [CerrarRecompra]
+CREATE procedure dbo.[CerrarRecompra]
 	@RecompraID int,
 	@FechaCierre DateTime
 as
@@ -367,12 +367,11 @@ GO
 if object_id('CerrarSesionSP') is not null 
 	drop procedure CerrarSesionSP;
 go
-create procedure [CerrarSesionSP]
+create procedure dbo.[CerrarSesionSP]
 	@token varchar(100)
 as
 	update Usuarios set SesionToken = '' where SesionToken = @token;
 GO
-
 
 
 if object_id('CrearCartera') is not null 
@@ -382,15 +381,16 @@ CREATE procedure [dbo].[CrearCartera] --'emartinez', 1,  '991,992,993'
 	@FondeadorID int,
 	@ProductoID int,
 	@CreadoPor varchar(200),
-	@creditos nvarchar(max)
+	@creditos nvarchar(max),
+	@creado datetime
 as
 	declare @CarteraID int = 0;
 	declare @Inicial int;
 
 	--VALORES INICIALES PARA CADA CARTERA SEGÚN PRODUCTO
 	if @ProductoID = 2	set @inicial = 363;		--yapamotors
-	else if @ProductoID = 10 set @inicial = 1;	--pavivir
-	else if @ProductoID = 1  set @inicial = 1;	--papymes
+	else if @ProductoID = 10 set @inicial = 4;	--pavivir
+	else if @ProductoID = 1  set @inicial = 302;	--papymes
 	else set @inicial = 1;						--default
 
 	if(not exists(select * from carteras where ProductoID = @ProductoID))
@@ -403,7 +403,7 @@ as
 		@CarteraID,
 		@ProductoID,
 		@FondeadorID,
-		getdate(),
+		@creado,
 		null,
 		null,
 		@CreadoPor
@@ -427,7 +427,7 @@ GO
 if object_id('CrearPago') is not null 
 	drop procedure CrearPago;
 go
-CREATE procedure [CrearPago] --'emartinez', 1,  '991,992,993'
+CREATE procedure dbo.[CrearPago] --'emartinez', 1,  '991,992,993'
 	@CreadoPor varchar(200),
 	@Fondeadora int,
 	@cuotas nvarchar(max)
@@ -438,7 +438,7 @@ GO
 if object_id('CrearRecompra') is not null 
 	drop procedure CrearRecompra;
 go
-CREATE procedure [CrearRecompra] --'emartinez', 1,  '991,992,993'
+CREATE procedure dbo.[CrearRecompra] --'emartinez', 1,  '991,992,993'
 	@CreadoPor varchar(200),
 	@Fondeadora int,
 	@creditos nvarchar(max)
@@ -466,11 +466,12 @@ GO
 if object_id('EditarCartera') is not null 
 	drop procedure EditarCartera;
 go
-CREATE procedure [EditarCartera]
+CREATE procedure dbo.[EditarCartera]
 	@CarteraID int,
 	@ProductoID int,
 	@FondeadorID int,
-	@creditos nvarchar(max)
+	@creditos nvarchar(max),
+	@creado datetime
 as
 	delete from CarteraCredito where CarteraID = @CarteraID;
 
@@ -479,7 +480,8 @@ as
 	set 
 		FondeadorID = @FondeadorID, 
 		ProductoID = @ProductoID, 
-		Modificado = getdate()
+		Modificado = getdate(), 
+		Creado = @creado
 	where 
 		CarteraID = @CarteraID 
 		and ProductoID = @ProductoID;
@@ -492,7 +494,7 @@ GO
 if object_id('EditarPago') is not null 
 	drop procedure EditarPago;
 go
-create procedure [EditarPago]
+create procedure dbo.[EditarPago]
 	@PagoID int,
 	@Fondeador int,
 	@cuotas nvarchar(max)
@@ -502,7 +504,7 @@ GO
 if object_id('EditarRecompra') is not null 
 	drop procedure EditarRecompra;
 go
-create procedure [EditarRecompra]
+create procedure dbo.[EditarRecompra]
 	@RecompraID int,
 	@Fondeador int,
 	@creditos nvarchar(max)
@@ -519,7 +521,7 @@ GO
 if object_id('EliminarCartera') is not null 
 	drop procedure EliminarCartera;
 go
-create procedure  [EliminarCartera]
+create procedure  dbo.[EliminarCartera]
 	@CarteraID int,
 	@ProductoID int
 as
@@ -535,7 +537,7 @@ GO
 if object_id('EliminarPago') is not null 
 	drop procedure EliminarPago;
 go
-create procedure  [EliminarPago]
+create procedure  dbo.[EliminarPago]
 	@PagoID int
 as
 	delete from CuotaPago where PagoID = @PagoID;
@@ -546,7 +548,7 @@ GO
 if object_id('EliminarRecompra') is not null 
 	drop procedure EliminarRecompra;
 go
-create procedure  [EliminarRecompra]
+create procedure  dbo.[EliminarRecompra]
 	@RecompraID int
 as
 	delete from CreditoRecompra where RecompraID = @RecompraID;
@@ -577,7 +579,7 @@ GO
 if object_id('LoginSP') is not null 
 	drop procedure LoginSP;
 go
-CREATE procedure [LoginSP] --'asalazar', '12345'
+CREATE procedure dbo.[LoginSP] --'asalazar', '12345'
 	@usuario varchar(100),
 	@clave varchar(100)
 as
@@ -633,7 +635,7 @@ GO
 if object_id('Resumen') is not null 
 	drop procedure Resumen;
 go
-CREATE procedure [Resumen] --1011
+CREATE procedure dbo.[Resumen] --1011
 	@carteraid int
 as
 select
@@ -926,8 +928,9 @@ if @tipo = 'credito'
 					credcronograma cro
 					inner join (
 						select 
-							cro.nCodCred,
-							max(cro.nNroCalendario) topCalendario
+							cro.nCodCred,							
+							case when cro.nCodCred = 117489 then 2
+							else max(cro.nNroCalendario) end topCalendario
 						from 
 							credcronograma cro
 						group by 
@@ -970,7 +973,8 @@ if @tipo = 'dni'
 					inner join (
 						select 
 							cro.nCodCred,
-							max(cro.nNroCalendario) topCalendario
+							case when cro.nCodCred = 117489 then 2
+							else max(cro.nNroCalendario) end topCalendario
 						from 
 							credcronograma cro
 						group by 
@@ -1013,7 +1017,8 @@ if @tipo = 'ruc'
 					inner join (
 						select 
 							cro.nCodCred,
-							max(cro.nNroCalendario) topCalendario
+							case when cro.nCodCred = 117489 then 2
+							else max(cro.nNroCalendario) end topCalendario
 						from 
 							credcronograma cro
 						group by 
@@ -1081,7 +1086,9 @@ from
 			credcronograma cro
 			inner join carteracredito cc on cc.nCodCred = cro.ncodcred
 			inner join (
-				select cro.ncodcred, max(cro.nNroCalendario) mayor
+				select cro.ncodcred, 
+				case when cro.nCodCred = 117489 then 2
+				else max(cro.nNroCalendario) end mayor
 				from credcronograma cro
 				group by cro.ncodcred	
 			) my on my.ncodcred = cro.ncodcred and my.mayor = cro.nNroCalendario
@@ -1136,7 +1143,9 @@ from
 	carteras ca
 	inner join carteracredito cc on cc.CarteraId = ca.CarteraID and cc.ProductoID = ca.ProductoID
 	inner join (
-		select cro.ncodcred, max(nNroCalendario) mayor
+		select cro.ncodcred, 		
+		case when cro.nCodCred = 117489 then 2
+		else max(cro.nNroCalendario) end mayor
 		from credcronograma cro
 		group by cro.nCodCred
 	) may on may.nCodcred = cc.nCodCred

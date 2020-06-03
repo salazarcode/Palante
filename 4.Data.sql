@@ -6,8 +6,10 @@ insert into roles values('Administrador', getdate())
 insert into RolUsuario values(1, 1)
 
 
+
 --crear una cartera normal
 exec dbo.CrearCartera 1, 2, 'krobles', '123529';
+update carteras set creado = '20200501' where carteraid = 363;
 
 --crear cartera de reprogramados
 DECLARE @Result VARCHAR(MAX);
@@ -114,3 +116,6 @@ where
 	)
 
 exec CrearCartera 1, 2, 'krobles', @Result;
+update carteras set creado = '20200501' where carteraid = 364;
+
+update carteracredito set repro = 1 where carteraid = 364

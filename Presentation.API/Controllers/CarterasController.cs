@@ -42,7 +42,8 @@ namespace GestionCartera.API.Controllers
                         FondeadorID = carteraVO.FondeadorID
                     },
                     Creditos = new List<Credito>(),
-                    ProductoID = carteraVO.ProductoID
+                    ProductoID = carteraVO.ProductoID,
+                    Creado = carteraVO.Creado
                 };
 
                 if (carteraVO.Creditos != "" && carteraVO.Creditos != null)
