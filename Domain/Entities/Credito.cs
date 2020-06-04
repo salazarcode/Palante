@@ -22,7 +22,8 @@ namespace Domain.Entities
         public string razonSocial { get; set; }
         public Producto Producto { get; set; }
         public bool DisponibleParaCartera { get; set; }
-        public string precio{ get; set; }
+        public string precio { get; set; }
+        public string ccodcta { get; set; }
         public int EsRepro { get; set; }
         public int codigoProducto { get; set; }
         public string nombreProducto { get; set; }
