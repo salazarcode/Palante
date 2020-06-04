@@ -384,44 +384,90 @@ CREATE procedure [dbo].[CrearCartera] --'emartinez', 1,  '991,992,993'
 	@creditos nvarchar(max),
 	@creado datetime
 as
+	/*
+
+	ALGORITMO
+	si (hay una cartera con el mismo producto) entonces
+		n = es la ultima cartera con este producto
+		si (esa cartera tiene creditos) entonces
+			n = n + 1
+			se crea la cartera
+			devuelve n
+		sino
+			devolver n
+		fin si
+	sino
+		n = inicial
+		se crea la cartera con los creditos especificados si los hay
+	fin si
+
+
+	*/
 	declare @CarteraID int = 0;
-	declare @Inicial int;
+	declare @inicial int;
 
 	--VALORES INICIALES PARA CADA CARTERA SEGÚN PRODUCTO
-	if @ProductoID = 2	set @inicial = 363;		--yapamotors
-	else if @ProductoID = 10 set @inicial = 4;	--pavivir
+	if @ProductoID = 2	set @inicial = 363;			--yapamotors
+	else if @ProductoID = 10 set @inicial = 4;		--pavivir
 	else if @ProductoID = 1  set @inicial = 302;	--papymes
-	else set @inicial = 1;						--default
+	else set @inicial = 1;							--default
 
-	if(not exists(select * from carteras where ProductoID = @ProductoID))
-		set @CarteraID = @inicial;
+	if(exists(select * from carteras where ProductoID = @ProductoID))
+	begin
+		set @CarteraID = ( select max(carteraid) from carteras where ProductoID = @ProductoID );
+		if(exists(select * from carteracredito where productoid = @ProductoID and carteraid = @CarteraID))
+		begin
+			set @CarteraID = @CarteraID + 1
+			insert into Carteras values(
+				@CarteraID,
+				@ProductoID,
+				@FondeadorID,
+				@creado,
+				null,
+				null,
+				@CreadoPor
+			)
+
+			insert into CarteraCredito 
+			select 
+				@CarteraID, 
+				@ProductoID,
+				a.tuple,
+				case when dbo.EsRepro(a.tuple) = 1 then dbo.CuantasRepro(a.tuple)
+				else 0 end repro
+			from 
+				dbo.split_string(@creditos, ',') a;
+
+			select @CarteraID cartera;
+		end
+		else
+			select @CarteraID cartera;
+	end
 	else
-		set @CarteraID = ( select max(carteraid) + 1 from carteras where ProductoID = @ProductoID );
-	--FIN DE VALORES INICIALES PARA CARTERAS SEGÚN PRODUCTO
+	begin
+		set @CarteraID = @inicial;
+		insert into Carteras values(
+			@CarteraID,
+			@ProductoID,
+			@FondeadorID,
+			@creado,
+			null,
+			null,
+			@CreadoPor
+		)
 
-	insert into Carteras values(
-		@CarteraID,
-		@ProductoID,
-		@FondeadorID,
-		@creado,
-		null,
-		null,
-		@CreadoPor
-	)
+		insert into CarteraCredito 
+		select 
+			@CarteraID, 
+			@ProductoID,
+			a.tuple,
+			case when dbo.EsRepro(a.tuple) = 1 then dbo.CuantasRepro(a.tuple)
+			else 0 end repro
+		from 
+			dbo.split_string(@creditos, ',') a;
 
-	-- select * from CarteraCredito
-
-	insert into CarteraCredito 
-	select 
-		@CarteraID, 
-		@ProductoID,
-		a.tuple,
-		case when dbo.EsRepro(a.tuple) = 1 then dbo.CuantasRepro(a.tuple)
-		else 0 end repro
-	from 
-		dbo.split_string(@creditos, ',') a;
-
-	select @CarteraID cartera;
+		select @CarteraID cartera;
+	end
 GO
 
 if object_id('CrearPago') is not null 
