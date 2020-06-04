@@ -5,8 +5,6 @@ insert into usuarios values('Kelly Robles', 0,'krobles', '12345', null, getdate(
 insert into roles values('Administrador', getdate())
 insert into RolUsuario values(1, 1)
 
-
-
 --crear una cartera normal
 exec dbo.CrearCartera 1, 2, 'krobles', '123529', '20200501';
 
@@ -113,6 +111,8 @@ where
 		'43239978',
 		'43487933'
 	)
+
+	select @Result res
 
 exec CrearCartera 1, 2, 'krobles', @Result, '20200501';
 

@@ -9,7 +9,9 @@ create procedure dbo.[ResumenYapamotors] --1032
 as
 --declare @CarteraID int  = 365;
 select 
-	c.nCodCred operacion,
+	case when ltrim(rtrim(c.cCodCta)) = '' then convert(nvarchar(6),c.nCodCred)
+	else ltrim(rtrim(c.cCodCta)) end operacion,
+	/*c.nCodCred operacion,*/
 
 	case when p.nTipoPersona = 1 then n.cApePat + ' ' + n.cApeMat + ' ' + n.cNombres
 	else j.cRazonSocial end cliente,
@@ -84,7 +86,7 @@ go
 if object_id('AnexoYapamotors') is not null 
 	drop procedure dbo.AnexoYapamotors;
 go
-CREATE procedure dbo.AnexoYapamotors
+CREATE procedure dbo.AnexoYapamotors --363,2
 	@CarteraID int,
 	@ProductoID int
 	as
@@ -94,7 +96,9 @@ select
 	else j.cRUC end ideDeudor ,
 	case when p.nTipoPersona = 1 then n.cApePat + ' ' + n.cApeMat + ' ' + n.cNombres
 	else j.cRazonSocial end apellidosNombres ,
-	c.nCodCred credito,
+	case when ltrim(rtrim(c.cCodCta)) = '' then convert(nvarchar(6),c.nCodCred)
+	else ltrim(rtrim(c.cCodCta)) end credito,
+	/*c.nCodCred credito,*/
 	'MICRO EMPRESA' tipoCredito,
 	c.nPrestamo monto,
 	case when c.nMoneda = 1 then 'Soles'
@@ -164,10 +168,15 @@ as
 		cro.nCodCred
 
 	select 
+	/*
 		case 
 			when cc.repro <> 0 then left(cc.nCodCred + '-' + cc.repro + space(20),20)
 			else left(convert(nvarchar,cc.nCodCred) + space(20),20)
 		end ncodcred,
+		*/
+		case when ltrim(rtrim(c.cCodCta)) = '' then convert(nvarchar(6),c.nCodCred)
+		else ltrim(rtrim(c.cCodCta)) end ncodcred,
+
 		left(convert(nvarchar,cro.nNroCuota) + FORMAT(cro.dFecVcto, 'yyyyMMdd') + space(17),17) cuotaFecha,
 		left(convert(nvarchar,convert(decimal(10,2),cro.nCapital)) + space(15),15)  nCapital,
 		left(convert(nvarchar,convert(decimal(10,2),cro.nInteres)) + space(17),17) nInteres,
@@ -177,6 +186,7 @@ as
 	from 	
 		credcronograma cro
 		inner join carteracredito cc on cc.nCodCred = cro.nCodCred
+		inner join creditos c on c.nCodCred = cc.nCodCred
 		inner join @table a on a.nCodCred = cro.nCodCred
 	where 
 		cc.CarteraId = @carteraid
@@ -276,10 +286,14 @@ CREATE procedure dbo.[CreditosCSV] --1016
 	@ProductoID int
 as
 select
+/*
 	case 
 		when cc.repro <> 0 then left(cc.nCodCred + '-' + cc.repro + space(20), 20)
 		else left(convert(nvarchar,cc.nCodCred) + space(20),20)
 	end ncodcred,
+	*/
+	case when ltrim(rtrim(c.cCodCta)) = '' then convert(nvarchar(6),c.nCodCred)
+	else ltrim(rtrim(c.cCodCta)) end ncodcred,
 	case when p.nTipoPersona = 1 then left('DNI'+n.cDNI + space(19),19) else left('RUC'+ j.cRuc+space(19),19) end id,
 	left(convert(nvarchar,c.nPrestamo) + space(15),15) importe,
 	left(CONVERT(nvarchar, precios.precio) + 'A' + space(13),13) precio,
