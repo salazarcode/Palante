@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GestionCartera.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class FondeadorController : ControllerBase
     {

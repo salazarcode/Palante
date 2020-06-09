@@ -14,7 +14,7 @@ using Domain.ValueObjects;
 namespace GestionCartera.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class CreditosController : ControllerBase
     {
         private readonly ICreditoService _CreditoService;

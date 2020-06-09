@@ -13,7 +13,7 @@ using Domain.Contracts.Services;
 namespace GestionCartera.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class ClientesController : ControllerBase
     {
         private readonly IClienteService _clienteService;

@@ -6,3 +6,4 @@ C:\Users\USUARIO\source\repos\Presentation.API\Transversal\obj\Debug\netcoreapp3
 C:\Users\USUARIO\source\repos\Presentation.API\Transversal\obj\Debug\netcoreapp3.1\Transversal.dll
 C:\Users\USUARIO\source\repos\Presentation.API\Transversal\obj\Debug\netcoreapp3.1\Transversal.pdb
 C:\Users\USUARIO\source\repos\Presentation.API\Transversal\obj\Debug\netcoreapp3.1\Transversal.csproj.CoreCompileInputs.cache
+C:\Users\USUARIO\source\repos\Presentation.API\Transversal\obj\Debug\netcoreapp3.1\Transversal.csprojAssemblyReference.cache

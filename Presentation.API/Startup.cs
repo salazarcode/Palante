@@ -40,7 +40,8 @@ namespace GestionCartera.API
             services.AddSingleton<IProductoRepository, ProductoRepository>();
             services.AddSingleton<IRecompraRepository,  RecompraRepository>();
             services.AddSingleton<IPagoRepository,      PagoRepository>();
-            services.AddSingleton<ICuotaRepository,     CuotaRepository>();
+            services.AddSingleton<ICuotaRepository, CuotaRepository>();
+            services.AddSingleton<ICronogramaRepository, CronogramaRepository>();
 
             services.AddSingleton<IClienteService, ClienteService>();
             services.AddSingleton<ICreditoService, CreditoService>();
@@ -52,6 +53,7 @@ namespace GestionCartera.API
             services.AddSingleton<IRecompraService,  RecompraService>();
             services.AddSingleton<IPagoService,  PagoService>();
             services.AddSingleton<ICuotaService, CuotaService>();
+            services.AddSingleton<ICronogramaService, CronogramaService>();
 
             services.AddCors(options => {
                 options.AddPolicy("default", builder => {
@@ -96,7 +98,7 @@ namespace GestionCartera.API
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("v1/swagger.json", "Palante API V1");
             });
 
         }

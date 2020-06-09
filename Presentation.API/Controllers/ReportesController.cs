@@ -17,7 +17,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace GestionCartera.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ReportesController : ControllerBase
     {

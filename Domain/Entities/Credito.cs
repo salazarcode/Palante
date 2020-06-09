@@ -28,5 +28,7 @@ namespace Domain.Entities
         public int codigoProducto { get; set; }
         public string nombreProducto { get; set; }
         public int pages { get; set; }
+        public List<Cronograma> CronogramasPalante { get; set; }
+        public List<Cronograma> CronogramasFondeador { get; set; }
     }
 }

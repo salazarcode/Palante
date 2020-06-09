@@ -6,12 +6,14 @@ namespace Domain.Entities
 {
     public class Cuota
     {
-        public int nCodCred { get; set; }
-        public int nNroCuota{ get; set; }
-        public DateTime dFecVcto { get; set; }
-        public decimal nCapital { get; set; }
-        public decimal nInteres { get; set; }
+        public int nNroCuota { get; set; }
+        public string dFecVcto { get; set; }
+        public string nCapital { get; set; }
+        public decimal nInteresComp { get; set; }
+        public decimal nPerGracia { get; set; }
         public decimal nSeguro { get; set; }
-        public decimal nCuotaMensual{ get; set; }
+        public decimal nSegDesgravamen { get; set; }
+        public int nEstado { get; set; }
+        public int nEstadoCuota { get; set; }
     }
 }

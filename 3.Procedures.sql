@@ -214,11 +214,14 @@ CREATE procedure dbo.[CalificacionesCSV]
 	@carteraid int,
 	@ProductoID int
 as
-select 
+select /*
 	case 
 		when cc.repro <> 0 then left(cc.nCodCred + '-' + cc.repro + space(20), 20)
 		else left(convert(nvarchar,cc.nCodCred) + space(20),20)
-	end ncodcred,
+	end ncodcred,*/
+	
+	case when ltrim(rtrim(c.cCodCta)) = '' then convert(nvarchar(6),c.nCodCred)
+	else ltrim(rtrim(c.cCodCta)) end ncodcred,
 	case
 		when ccp.nvalor in(7,8,9,2) then '09'
 		when ccp.nvalor = 6 then '12'
@@ -1228,6 +1231,30 @@ from
 	inner join CatalogoCodigos cod on ca.ProductoID = cod.nValor and cod.ncodigo = 4029
 go
 
-
-
-
+if object_id('GetCronogramas') is not null 
+	drop procedure GetCronogramas;
+go
+create procedure dbo.GetCronogramas
+	@tipo int,
+	@nCodCred int
+as
+if @tipo = 1
+begin
+	select 
+		cro.nNroCalendario,
+		cro.*	
+	from 
+		credcronograma cro
+	where 
+		cro.nCodCred = @nCodCred
+end
+else
+begin
+	select 
+		cro.nNroCalendario,
+		cro.*	
+	from 
+		credcronograma cro
+	where 
+		cro.nCodCred = @nCodCred
+end
