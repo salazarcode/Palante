@@ -14,7 +14,7 @@ EXEC master.sp_addlinkedsrvlogin
 	@useself=N'False', 
 	@locallogin=NULL, 
 	@rmtuser=N'Uexterno2', 
-	@rmtpassword=N'Ext3rn0201'
+	@rmtpassword=N'Java***174'
 go
 
 if exists(select * from sys.synonyms where name like '%CatalogoCodigos%') drop synonym CatalogoCodigos;

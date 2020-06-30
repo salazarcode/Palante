@@ -10,9 +10,8 @@ if object_id('rolusuario') is not null			drop table rolusuario;
 if object_id('usuarios') is not null			drop table usuarios;
 if object_id('CreditosBloqueados') is not null  drop table CreditosBloqueados;
 if object_id('creditosparaventacartera') is not null drop view dbo.creditosparaventacartera;
+if object_id('CronogramasAlternativos') is not null  drop table CronogramasAlternativos;
 go
-
-
 
 CREATE TABLE [CarteraCredito](
 	[CarteraId] [int] NOT NULL,
@@ -68,16 +67,6 @@ CREATE TABLE [Fondeadores](
 	[Nombre] [varchar](100) NULL,
 	[Color] [varchar](50) NULL,
 	[evaluador] [varchar](100) NULL)
-GO
-
-CREATE TABLE [Pagos](
-	[PagoID] [int] IDENTITY(1,1) NOT NULL,
-	[FondeadorId] [int] NULL,
-	[Creado] [datetime] NULL,
-	[Modificado] [datetime] NULL,
-	[FechaCierre] [datetime] NULL,
-	[CreadoPor] [varchar](100) NULL
-) ON [PRIMARY]
 GO
 
 CREATE TABLE [Recompras](
@@ -159,3 +148,16 @@ where
     and c.nCodCred not in(select nCodCred from CreditosBloqueados)
 	and cod.nvalor not in(3,4,5)
 GO
+
+create table dbo.CronogramasAlternativos(
+	nCodCred nvarchar(10),
+	nNroCuota int,
+	dFecPago datetime,
+	amortizacion decimal(10,2),
+	interes decimal(10,2),
+	periodoGracia  decimal(10,2),
+	encaje decimal(10,2),	
+	totalCuota decimal(10,2)
+
+	primary key(nCodCred, nNroCuota)
+)

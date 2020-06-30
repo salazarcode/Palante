@@ -10,6 +10,7 @@ using Domain.Contracts.Repositories;
 using Domain.Entities;
 using Domain.Contracts.Services;
 using Domain.ValueObjects;
+using Transversal.Util;
 
 namespace GestionCartera.API.Controllers
 {
@@ -58,6 +59,31 @@ namespace GestionCartera.API.Controllers
         {
             var res = await _CreditoService.Search(param);
             return res;
+        }
+
+        /// <summary>
+        /// Search
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("PorEstado")]
+        public async Task<FileContentResult> PorEstado([FromForm] string Estados)
+        {
+            try
+            {            
+                var res = await _CreditoService.PorEstado(Estados);
+
+                var array = FileGenerator.ExcelToByteArray<CreditoVO>(res, "ReporteDeuda");
+
+                var nombre = "CreditosPorEstado.xlsx";
+
+                return File(array, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombre);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
     }
 }

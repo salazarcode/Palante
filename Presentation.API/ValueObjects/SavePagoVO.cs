@@ -7,8 +7,9 @@ namespace GestionCartera.API.ValueObjects
 {
     public class SavePagoVO
     {
-        public int PagoID { get; set; }
         public int FondeadorID { get; set; }
-        public string Cuotas { get; set; }
+        public int ProductoID { get; set; }
+        public string Creador { get; set; }
+        public string Pagos { get; set; }
     }
 }

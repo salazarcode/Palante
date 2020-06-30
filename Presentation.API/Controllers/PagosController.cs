@@ -25,123 +25,48 @@ namespace GestionCartera.API.Controllers
             _PagoService = PagoService;
         }
 
-            /*
+    
+
         /// <summary>
-        /// Listar todos los Cuotas
+        /// Listar todos los Creditos
         /// </summary>
         /// <returns></returns>
         [HttpPost]
         [Route("Save")]
-        public async Task<int> Save([FromForm] SavePagoVO intake)
+        public async Task<int> Save([FromForm] SavePagoVO pago)
         {
             try
             {
-                Pago res = new Pago
+                List<string> lista = pago.Pagos.Split(";").ToList();
+                List<PagoDetalle> detalles = lista.Select(x =>
                 {
-                    PagoID = intake.PagoID,
-                    Fondeador = new Fondeador { 
-                        FondeadorID = intake.FondeadorID
-                    },
-                    Cuotas = new List<Cuota>()
-                };
+                    var res = x.Split(",");
+                    PagoDetalle det = new PagoDetalle();
+                    det.nCodCred = Convert.ToInt32(res[0]);
 
-                if (intake.Cuotas != "")
-                    intake.Cuotas.Split(",").ToList().ForEach(x => res.Cuotas.Add(new Cuota { 
-                        CuotaID = Convert.ToInt32(x)
-                    }));
+                    det.nNroCalendario = Convert.ToInt32(res[1]);
 
-                int id = await _PagoService.Save(res);
+                    det.nNroCuota = Convert.ToInt32(res[2]);
 
-                return id;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-          
-        }
-  */
-        /// <summary>
-        /// Quitar Crédito de una Pago
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("Remove")]
-        public async Task<int> Remove(int PagoID, int nCodCred, int nNroCuota)
-        {
-            try
-            {
-                var res = await _PagoService.Add(PagoID, nCodCred, nNroCuota);
+                    det.Monto = Convert.ToDecimal(res[3]);
+
+                    det.EsDeuda = Convert.ToBoolean(res[4]);
+
+                    return det;
+                }).ToList();
+
+                Pago input = new Pago();
+
+                input.CreadoPor = pago.Creador;
+                input.Detalles = detalles;
+                input.Producto = new Producto() { nValor = pago.ProductoID };
+                input.Fondeador = new Fondeador() { FondeadorID = pago.FondeadorID };
+
+                var res = await _PagoService.Save(input);
                 return res;
             }
             catch (Exception ex)
             {
-
-                throw ex;
-            }
-        }
-
-    
-
-    /// <summary>
-    /// Listar todos los Creditos
-    /// </summary>
-    /// <returns></returns>
-    [HttpPost]
-    [Route("Save")]
-    public async Task<int> Save([FromForm] int fondeadorID, [FromForm] string creadoPor)
-    {
-        try
-        {
-            int NewCarteraID = await _PagoService.Save(new Pago { 
-                Fondeador = new Fondeador { FondeadorID = fondeadorID},
-                CreadoPor = creadoPor
-            });
-
-            return NewCarteraID;
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
-    }
-
-
-    /// <summary>
-    /// Cerrar Pago
-    /// </summary>
-    /// <returns></returns>
-    [HttpPost]
-        [Route("Cerrar")]
-        public async Task<int> Cerrar([FromForm] int PagoID, [FromForm] DateTime FechaCierre)
-        {
-            try
-            {
-                var res = await _PagoService.Cerrar(PagoID, FechaCierre);
-                return res;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        /// <summary>
-        /// Agregar Crédito
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("Add")]
-        public async Task<int> Add(int PagoID, int nCodCred, int nNroCuota)
-        {
-            try
-            {
-                var res = await _PagoService.Add(PagoID, nCodCred, nNroCuota);
-                return res;
-            }
-            catch (Exception ex)
-            {
-
                 throw ex;
             }
         }
@@ -156,7 +81,7 @@ namespace GestionCartera.API.Controllers
         {
             try
             {
-                var res = await _PagoService.All();
+                var res = await _PagoService.All(new Pago());
                 return res;
             }
             catch (Exception ex)
@@ -165,19 +90,17 @@ namespace GestionCartera.API.Controllers
             }
         }
 
-
-
         /// <summary>
-        /// Eliminar Pago
+        /// Listar todos las Pagos
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        [Route("Eliminar")]
-        public async Task<int> Eliminar(int PagoID)
+        [HttpPost]
+        [Route("Find")]
+        public async Task<Pago> Find([FromForm] int PagoID)
         {
             try
             {
-                var res = await _PagoService.Delete(PagoID);
+                var res = await _PagoService.Find(new Pago() { PagoID = PagoID });
                 return res;
             }
             catch (Exception ex)
@@ -186,29 +109,37 @@ namespace GestionCartera.API.Controllers
             }
         }
 
-
-
         /// <summary>
-        /// Obtener Archivo Excel
+        /// Listar todos las Pagos
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("GetExcel")]
-        public async Task<FileStreamResult> GetCsv(int PagoID)
+        [Route("Delete")]
+        public async Task<int> Delete(int PagoID)
         {
             try
             {
-                var nombre = @"experimento.csv";
+                var res = await _PagoService.Delete(new Pago() { PagoID = PagoID });
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-                var dir = @"C:\Users\USUARIO\Desktop\";
-
-                var Pagos = await _PagoService.All();
-
-                FileGenerator.CSV<Pago>(Pagos.ToList(), dir + nombre);
-
-                FileStream fs1 = new FileStream(dir, FileMode.Open, FileAccess.Read);
-
-                return File(fs1, "text/csv", nombre);
+        /// <summary>
+        /// Listar todos las Pagos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("FindDeuda")]
+        public async Task<List<PagoDetalle>> FindDeuda(int nCodCred)
+        {
+            try
+            {
+                var res = await _PagoService.FindDeuda(nCodCred);
+                return res;
             }
             catch (Exception ex)
             {

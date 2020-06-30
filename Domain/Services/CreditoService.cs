@@ -49,5 +49,18 @@ namespace Domain.Services
                 throw e;
             }
         }
+
+        public async Task<List<CreditoVO>> PorEstado(string EstadosConcatenadosComa)
+        {
+            try
+            {
+                var res = await _CreditoRepo.PorEstado(EstadosConcatenadosComa);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

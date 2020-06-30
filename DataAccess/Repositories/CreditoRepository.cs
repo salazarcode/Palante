@@ -134,5 +134,26 @@ namespace DAL.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<List<CreditoVO>> PorEstado(string EstadosConcatenadosComa)
+        {
+            try
+            {
+                string q = "exec dbo.GetCreditosPorEstado @EstadosConcatenadosComa";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@EstadosConcatenadosComa", EstadosConcatenadosComa);
+
+                using var conn = new SqlConnection(_connectionString);
+                var list = await conn.QueryAsync<CreditoVO>(q,param);
+                var res = list.Distinct().ToList();
+
+                return list.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

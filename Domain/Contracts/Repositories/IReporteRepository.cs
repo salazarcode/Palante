@@ -15,5 +15,6 @@ namespace Domain.Contracts.Repositories
         Task<List<ClasificacionesCSV>> GetClasificacionesCSV(int CarteraID, int ProductoID);
         Task<List<ResumenYapamotors>> ResumenYapamotors(int CarteraID, int ProductoID);
         Task<List<AnexoYapamotors>> AnexoYapamotors(int CarteraID, int ProductoID);
+        Task<List<PagosCSV>> GetPagosCSV(int PagoID);
     }
 }

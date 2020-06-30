@@ -17,73 +17,29 @@ namespace Domain.Services
             _pagoRepo = pagoRepo;
         }
 
-        public async Task<int> Add(int PagoID, int a, int b)
+        public async Task<List<Pago>> All(Pago pago)
         {
             try
             {
-                var res = await _pagoRepo.Add(PagoID, a, b);
+                var res = await _pagoRepo.All(new Paginacion() { });
                 return res;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw e;
+                throw ex;
             }
         }
 
-        public Task<int> Delete(int PagoID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<int> Remove(int PagoID, int a, int b)
+        public async Task<Pago> Find(Pago pago)
         {
             try
             {
-                var res = await _pagoRepo.Remove(PagoID, a, b);
-                return res;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        async Task<IEnumerable<Pago>> IPagoService.All()
-        {
-            try
-            {
-                var res = await _pagoRepo.All();
-                return res;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        async Task<int> IPagoService.Cerrar(int PagoID, DateTime FechaCierre)
-        {
-            try
-            {
-                var res = await _pagoRepo.Cerrar(PagoID, FechaCierre);
-                return res;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        async Task<Pago> IPagoService.Find(int PagoID)
-        {
-            try
-            {
-                var res = await _pagoRepo.Find(new Pago() { PagoID = PagoID});
+                var res = await _pagoRepo.Find(pago);
                 return res.First();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw e;
+                throw ex;
             }
         }
 
@@ -94,9 +50,35 @@ namespace Domain.Services
                 var res = await _pagoRepo.Save(pago);
                 return res;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw e;
+                throw ex;
+            }
+        }
+
+        async Task<int> IPagoService.Delete(Pago pago)
+        {
+            try
+            {
+                var res = await _pagoRepo.Delete(pago);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<PagoDetalle>> FindDeuda(int nCodCred)
+        {
+            try
+            {
+                var res = await _pagoRepo.FindDeuda(nCodCred);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }

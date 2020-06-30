@@ -1258,3 +1258,54 @@ begin
 	where 
 		cro.nCodCred = @nCodCred
 end
+
+if object_id('GetCreditosPorEstado') is not null 
+	drop procedure dbo.GetCreditosPorEstado;
+go
+create procedure dbo.GetCreditosPorEstado --'6,16'
+	@estados nvarchar(100)
+as
+select
+	(n.cDNI) dni,
+	n.cnombres + ' '  +  n.cApePat + ' ' + n.cApeMat  nombres,
+	(j.cRuc) ruc,
+	(j.cRazonSocial) razonSocial,
+	(select sum(monto) from CuotaPagoDeuda x where x.nCodCred = c.nCodCred and EsDeuda = 1) deuda,
+	c.*,
+	cod.nvalor codigoProducto,
+	cod.cNomCod nombreProducto,
+	beta.precio,
+	cod.*
+from 
+	creditos c
+	inner join CatalogoCodigos cod on c.nSubProd = cod.nValor
+	inner join CredPersonas cp on cp.nCodCred = c.nCodCred
+	left join PersonaNat n on n.nCodPers = cp.nCodPers
+	left join PersonaJur j on j.nCodPers = cp.nCodPers
+	inner join (
+		select 
+			cro.nCodCred,
+			sum(ncapital) precio 
+		from 
+			credcronograma cro
+			inner join (
+				select 
+					cro.nCodCred,							
+					case when cro.nCodCred = 117489 then 2
+					else max(cro.nNroCalendario) end topCalendario
+				from 
+					credcronograma cro
+				group by 
+					cro.ncodcred
+			) neo on neo.nCodCred = cro.ncodcred
+		where
+			cro.nnroCalendario = neo.topCalendario
+			and ((year(cro.dFecVcto) = year(getdate()) and month(cro.dFecVcto) > month(getdate())) or year(cro.dFecVcto) > year(getdate()))
+		group by 
+			cro.nCodCred
+	) beta on beta.nCodCred = c.nCodCred
+where
+	cod.ncodigo = 4029
+	and c.nCodCred not in(select nCodCred from CreditosBloqueados)
+	and cod.nvalor not in(3,4,5)
+	and c.nEstado in(select * from dbo.split_string(@estados,','))

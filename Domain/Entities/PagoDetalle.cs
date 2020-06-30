@@ -4,14 +4,13 @@ using System.Text;
 
 namespace Domain.Entities
 {
-    public class Cuota
+    public class PagoDetalle
     {
+        public int PagoID { get; set; }
         public int nCodCred { get; set; }
         public int nNroCalendario { get; set; }
         public int nNroCuota { get; set; }
-        public decimal nCapital { get; set; }
-        public decimal nInteres { get; set; }
-        public int nEstado { get; set; }
-        public int nEstadoCuota { get; set; }
+        public decimal Monto { get; set; }
+        public bool EsDeuda { get; set; }
     }
 }

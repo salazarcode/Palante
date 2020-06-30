@@ -9,11 +9,10 @@ namespace Domain.Contracts.Services
     public interface IPagoService
     {
         Task<int> Save(Pago pago);
-        Task<IEnumerable<Pago>> All();
-        Task<int> Add(int PagoID, int nCodCred, int nNroCuota);
-        Task<int> Remove(int PagoID, int nCodCred, int nNroCuota);
-        Task<Pago> Find(int PagoID);
-        Task<int> Cerrar(int PagoID, DateTime FechaCierre);
-        Task<int> Delete(int PagoID);
+        Task<Pago> Find(Pago pago);
+        Task<int> Delete(Pago pago);
+        Task<List<Pago>> All(Pago pago);
+        Task<List<PagoDetalle>> FindDeuda(int nCodCred);
+
     }
 }

@@ -8,8 +8,7 @@ namespace Domain.Contracts.Repositories
 {
     public interface IPagoRepository : IRepository<Pago>
     {
-        Task<int> Cerrar(int PagoID, DateTime FechaCierre);
-        Task<int> Add(int PagoID, int nCodCred, int nNroCuota);
-        Task<int> Remove(int PagoID, int nCodCred, int nNroCuota);
+        Task<int> Crear(Pago pago);
+        Task<List<PagoDetalle>> FindDeuda(int nCodCred);
     }
 }

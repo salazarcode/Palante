@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using GestionCartera.API.ValueObjects;
 using Transversal.Util;
 using Microsoft.Extensions.Configuration;
+using Microsoft.CodeAnalysis;
 
 namespace GestionCartera.API.Controllers
 {
@@ -21,13 +22,17 @@ namespace GestionCartera.API.Controllers
     [ApiController]
     public class ReportesController : ControllerBase
     {
+        private readonly IPagoService _PagoService;
         private readonly IReporteService _ReporteService;
+        private readonly ICreditoService _CreditoService;
         private static Random _random;
         private readonly string _dir;
         private readonly IConfiguration _conf;
 
-        public ReportesController(IReporteService ReporteService, IConfiguration conf)
+        public ReportesController(IReporteService ReporteService, ICreditoService CreditoService, IPagoService PagoService, IConfiguration conf)
         {
+            _PagoService = PagoService;
+            _CreditoService = CreditoService;
             _ReporteService = ReporteService;
             _random = new Random();
 
@@ -41,51 +46,137 @@ namespace GestionCartera.API.Controllers
               .Select(s => s[_random.Next(s.Length)]).ToArray());
         }
 
+        [HttpPost]
+        [Route("ReporteDeuda")]
+        public async Task<FileContentResult> ReporteDeuda([FromForm] string creditos, [FromForm] DateTime fecha)
+        {
+            try
+            {
+                CreditoSearch parametros = new CreditoSearch();
+                parametros.Tipo = "credito";
+                parametros.Query = creditos;
+                parametros.Fecha = fecha;
+
+                List<Credito> resCreditos = await _CreditoService.Search(parametros);
+
+                List<ReporteDeuda> reportes = new List<ReporteDeuda>();
+                
+                resCreditos.ForEach(x =>
+                {
+                    var reporte = new ReporteDeuda();
+                    reporte.nCodCred = x.nCodCred;
+                    reporte.nMoneda = x.nMoneda;
+                    reporte.nPrestamo = Convert.ToDecimal(x.nPrestamo);
+                    reporte.dFecIni = x.dFecIni;
+                    reporte.nEstado = x.nEstado;
+                    reporte.nNroCuotas = x.nNroCuotas;
+                    reporte.dni = x.dni;
+                    reporte.nombres = x.nombres;
+                    reporte.ruc = x.ruc;
+                    reporte.razonSocial = x.razonSocial;
+                    reporte.nombreProducto = x.nombreProducto;
+                    reporte.precio = Convert.ToDecimal(x.precio);
+                    reporte.deuda = x.deuda;
+                    reportes.Add(reporte);
+                });
+
+                var array = FileGenerator.ExcelToByteArray<ReporteDeuda>(reportes, "ReporteDeuda");
+
+                return File(array, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ReporteDeuda.xlsx");                
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         [HttpGet]
         [Route("GetZip")]
         public async Task<FileStreamResult> GetZip(int CarteraID, int ProductoID)
         {
-            string dirbase = _dir;
             string dirname = GetRandom(10);
 
             string ruta = _dir + dirname;
 
-            DirectoryInfo di = null;
             if (!Directory.Exists(ruta))
             {
-                di = Directory.CreateDirectory(ruta);
+                Directory.CreateDirectory(ruta);
 
-                var nombre1 = ruta + "/" + "cliente.txt";
-                var reporte1 = await _ReporteService.GetClientesCSV(CarteraID, ProductoID);
-                FileGenerator.CSV<ClientesCSV>(reporte1, nombre1);
+                var absClientes = ruta + "/" + "cliente.txt";
+                var clientes = await _ReporteService.GetClientesCSV(CarteraID, ProductoID);
+                FileGenerator.CSV<ClientesCSV>(clientes, absClientes);
 
-                var nombre2 = ruta + "/" + "cronogramas.txt";
-                var reporte2 = await _ReporteService.GetCronogramasCSV(CarteraID, ProductoID);
-                FileGenerator.CSV<CronogramasCSV>(reporte2, nombre2);
+                var absCronogramas = ruta + "/" + "cronogramas.txt";
+                var cronogramas = await _ReporteService.GetCronogramasCSV(CarteraID, ProductoID);
+                FileGenerator.CSV<CronogramasCSV>(cronogramas, absCronogramas);
 
-                var nombre3 = ruta + "/" + "creditos.txt";
-                var reporte3 = await _ReporteService.GetCreditosCSV(CarteraID, ProductoID);
-                FileGenerator.CSV<CreditosCSV>(reporte3, nombre3);
+                var absCreditos = ruta + "/" + "creditos.txt";
+                var creditos = await _ReporteService.GetCreditosCSV(CarteraID, ProductoID);
+                FileGenerator.CSV<CreditosCSV>(creditos, absCreditos);
 
-                var nombre4 = ruta + "/" + "clasificaciones.txt";
-                var reporte4 = await _ReporteService.GetClasificacionesCSV(CarteraID, ProductoID);
-                FileGenerator.CSV<ClasificacionesCSV>(reporte4, nombre4);
+                var absClasificaciones = ruta + "/" + "clasificaciones.txt";
+                var clasificaciones = await _ReporteService.GetClasificacionesCSV(CarteraID, ProductoID);
+                FileGenerator.CSV<ClasificacionesCSV>(clasificaciones, absClasificaciones);
 
-                var nombre5 = ruta + "/" + "Resumen.xlsx";
-                var reporte5 = await _ReporteService.ResumenYapamotors(CarteraID, ProductoID);
-                FileGenerator.Excel<ResumenYapamotors>(reporte5, "Resumen", nombre5);
+                var absResumen = ruta + "/" + "Resumen.xlsx";
+                var resumen = await _ReporteService.ResumenYapamotors(CarteraID, ProductoID);
+                FileGenerator.Excel<ResumenYapamotors>(resumen, "Resumen", absResumen);
 
-                var nombre6 = ruta + "/" + "Anexo.xlsx";
-                var reporte6 = await _ReporteService.AnexoYapamotors(CarteraID, ProductoID);
-                FileGenerator.Excel<AnexoYapamotors>(reporte6, "Anexo", nombre6);
+                var absAnexo = ruta + "/" + "Anexo.xlsx";
+                var anexo = await _ReporteService.AnexoYapamotors(CarteraID, ProductoID);
+                FileGenerator.Excel<AnexoYapamotors>(anexo, "Anexo", absAnexo);
 
-
+                var absSuperResumen = ruta + "/" + "ResumenDetallado.xlsx";
+                Dictionary<string, dynamic> dict = new Dictionary<string, dynamic>();
+                dict.Add("Clientes", clientes);
+                dict.Add("Cronogramas", cronogramas);
+                dict.Add("Clasificaciones", clasificaciones);
+                dict.Add("Creditos", creditos);
+                
+                Dictionary<string, Type> dictTypes = new Dictionary<string, Type>();
+                dictTypes.Add("Clientes", typeof(ClientesCSV));
+                dictTypes.Add("Cronogramas", typeof(CronogramasCSV));
+                dictTypes.Add("Clasificaciones", typeof(ClasificacionesCSV));
+                dictTypes.Add("Creditos", typeof(CreditosCSV));
+                FileGenerator.ExcelReporteVariasPaginas(dict, dictTypes, absSuperResumen);
             }
 
             string zipDir = _dir + GetRandom(10);
             DirectoryInfo diZip = Directory.CreateDirectory(zipDir);
 
             string zipName = zipDir + "/comprimidos.zip";
+            ZipFile.CreateFromDirectory(ruta, zipName);
+
+            FileStream fs1 = new FileStream(zipName, FileMode.Open, FileAccess.Read);
+
+            return File(fs1, "application/zip", "comprimidos.zip");
+        }
+
+        [HttpGet]
+        [Route("GetPago")]
+        public async Task<FileStreamResult> GetPago(int PagoID)
+        {
+            string dirname = GetRandom(10);
+
+            string ruta = _dir + dirname;
+
+            if (!Directory.Exists(ruta))
+            {
+                Directory.CreateDirectory(ruta);
+
+                var pago = await _ReporteService.GetPagosCSV(PagoID);
+
+                var absPagosCSV = ruta + "/" + "pago.txt";
+                FileGenerator.CSV<PagosCSV>(pago, absPagosCSV);
+
+                var absPagoExcel = ruta + "/" + "pago.xlsx";
+                FileGenerator.Excel<PagosCSV>(pago, "Pago" + PagoID, absPagoExcel);
+            }
+
+            string zipDir = _dir + GetRandom(10);
+            DirectoryInfo diZip = Directory.CreateDirectory(zipDir);
+
+            string zipName = zipDir + "/res.zip";
             ZipFile.CreateFromDirectory(ruta, zipName);
 
             FileStream fs1 = new FileStream(zipName, FileMode.Open, FileAccess.Read);

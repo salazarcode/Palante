@@ -18,40 +18,120 @@ namespace DAL.Repositories
         {
         }
 
-        public async Task<List<Pago>> All(Paginacion pag = null)
+        public async Task<List<PagoDetalle>> FindDeuda(int nCodCred)
         {
             try
             {
-                string query = @"
-                    select 
-	                    p.*, cro.*
-                    from 
-                        pagos p 
-                        inner join cuotapago cp on cp.pagoid = p.pagoid
-                        inner join credcronograma cro on cro.ncodcred = cp.ncodcred and cro.nnrocuota = cp.nnrocuota
-                    ";
+                string query = @"exec dbo.FindDeuda @nCodCred";
 
-                var orderDictionary = new Dictionary<int, Pago>();
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@nCodCred", nCodCred);
 
+                var res = await Query<PagoDetalle>(query, param);
+
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        async Task<List<Pago>> IRepository<Pago>.All(Paginacion paginacion)
+        {
+            try { 
+                string query = @"exec dbo.GetPagos";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+
+                var dict = new Dictionary<int, Pago>();
 
                 using var conn = new SqlConnection(_connectionString);
-                var list = await conn.QueryAsync<Pago, Cuota, Pago>(
+                var list = await conn.QueryAsync<Pago, PagoDetalle, Fondeador, Producto, Pago>(
                     query,
-                    (pago, cuota) =>
+                    (pago, detalle, fondeador, producto) =>
                     {
                         Pago pagoEntry;
 
-                        if (!orderDictionary.TryGetValue(pago.PagoID, out pagoEntry))
+                        if (!dict.TryGetValue(detalle.PagoID, out pagoEntry))
                         {
                             pagoEntry = pago;
-                            pagoEntry.Cuotas = new List<Cuota>();
-                            orderDictionary.Add(pagoEntry.PagoID, pagoEntry);
+                            pagoEntry.Fondeador = fondeador;
+                            pagoEntry.Producto = producto;
+                            pagoEntry.Detalles = new List<PagoDetalle>();
+                            dict.Add(pagoEntry.PagoID, pagoEntry);
                         }
 
-                        pagoEntry.Cuotas.Add(cuota);
+                        pagoEntry.Detalles.Add(detalle);
                         return pagoEntry;
                     },
-                    splitOn: "nCodCred");
+                    param,
+                    splitOn: "PagoID,FondeadorID,nCodigo");
+
+                return list.Distinct().ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+}
+
+        Task<int> IPagoRepository.Crear(Pago pago)
+        {
+            throw new NotImplementedException();
+        }
+
+        async Task<int> IRepository<Pago>.Delete(Pago entity)
+        {
+            try
+            {
+                string query = "exec EliminarPago @pagoID";
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@pagoID", entity.PagoID);
+
+                var res = await Execute(query, param);
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        async Task<List<Pago>> IRepository<Pago>.Find(Pago pago)
+        {
+            try
+            {
+                string query = @"dbo.FindPago @PagoID";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@PagoID", pago.PagoID);
+
+                var dict = new Dictionary<int, Pago>();
+
+
+                using var conn = new SqlConnection(_connectionString);
+                var list = await conn.QueryAsync<Pago, PagoDetalle, Fondeador, Producto, Pago>(
+                    query,
+                    (pago, detalle, fondeador, producto) =>
+                    {
+                        Pago pagoEntry;
+
+                        if (!dict.TryGetValue(detalle.PagoID, out pagoEntry))
+                        {
+                            pagoEntry = pago;
+                            pagoEntry.Fondeador = fondeador;
+                            pagoEntry.Producto = producto;
+                            pagoEntry.Detalles = new List<PagoDetalle>();
+                            dict.Add(pagoEntry.PagoID, pagoEntry);
+                        }
+
+                        pagoEntry.Detalles.Add(detalle);
+                        return pagoEntry;
+                    },
+                    param,
+                    splitOn: "PagoID,FondeadorID,nCodigo");
 
                 return list.Distinct().ToList();
             }
@@ -61,15 +141,32 @@ namespace DAL.Repositories
             }
         }
 
-        public async Task<int> Cerrar(int PagoID, DateTime FechaCierre)
+        async Task<int> IRepository<Pago>.Save(Pago pago)
         {
             try
             {
-                string query = "exec CerrarPago @PagoID, @FechaCierre";
+                List<string> ensamblado = pago.Detalles.Select(x =>
+                {
+                    List<string> campos = new List<string>();
+                    campos.Add(x.nCodCred.ToString());
+                    campos.Add(x.nNroCalendario.ToString());
+                    campos.Add(x.nNroCuota.ToString());
+                    campos.Add(x.Monto.ToString());
+                    campos.Add(x.EsDeuda.ToString());
+
+                    return String.Join(',', campos);
+                }).ToList();
+
+                var pagos = String.Join(";", ensamblado);
+
+                string query = "dbo.CrearPago @f, @p, @creador, @pagos";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@PagoID", PagoID);
-                param.Add("@FechaCierre", FechaCierre);
+                param.Add("@pagoID", pago.PagoID);
+                param.Add("@f", pago.Fondeador.FondeadorID);
+                param.Add("@p", pago.Producto.nValor);
+                param.Add("@creador", pago.CreadoPor);
+                param.Add("@pagos", pagos);
 
                 var res = await Execute(query, param);
 
@@ -79,93 +176,6 @@ namespace DAL.Repositories
             {
                 throw ex;
             }
-        }
-
-        public async Task<int> Delete(Pago pago)
-        {
-            try
-            {
-                string query = "exec [EliminarPago] @PagoID";
-                Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@PagoID", pago.PagoID);
-
-                var res = await Execute(query, param);
-
-                return res;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public async Task<int> Add(int PagoID, int nCodCred, int nNroCuota)
-        {
-            try
-            {
-                string query = "insert into CuotaPago values(@PagoID, @nCodCred, @nNroCuota)";
-
-                Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@PagoID", PagoID);
-                param.Add("@nCodCred", nCodCred);
-                param.Add("@nNroCuota", nNroCuota);
-
-                var res = await Execute(query, param);
-
-                return res;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public async Task<int> Remove(int PagoID, int nCodCred, int nNroCuota)
-        {
-            try
-            {
-                string query = "delete from CuotaPago where PagoID = @PagoID and nCodCred = @nCodCred and nNroCuota = @nNroCuota)";
-
-                Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@PagoID", PagoID);
-                param.Add("@nCodCred", nCodCred);
-                param.Add("@nNroCuota", nNroCuota);
-
-                var res = await Execute(query, param);
-
-                return res;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public async Task<int> Save(Pago entity)
-        {
-            try
-            {
-                string query = "insert into pagos values(@FondeadorID, getdate(), null, null, @CreadoPor)";
-
-                Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@FondeadorID", entity.Fondeador.FondeadorID);
-                param.Add("@CreadoPor", entity.CreadoPor);
-
-                var res = await Execute(query, param);
-
-                return res;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public Task<List<Pago>> Find(Pago query)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -8,11 +8,11 @@ namespace Domain.Entities
     {
         public int PagoID { get; set; }
         public Fondeador Fondeador { get; set; }
+        public Producto Producto { get; set; }
+        public string CreadoPor { get; set; }
         public DateTime Creado { get; set; }
         public DateTime Modificado { get; set; }
         public DateTime FechaCierre { get; set; }
-        public decimal MontoTotal{ get; set; }
-        public string CreadoPor { get; set; }
-        public List<Cuota> Cuotas { get; set; }
+        public List<PagoDetalle> Detalles { get; set; }
     }
 }
