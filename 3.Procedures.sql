@@ -245,7 +245,7 @@ GO
 if object_id('ClientesCSV') is not null 
 	drop procedure dbo.ClientesCSV;
 go
-CREATE procedure dbo.[ClientesCSV] 
+CREATE procedure [dbo].[ClientesCSV] 
 	@carteraid int,
 	@ProductoID int
 as
@@ -265,7 +265,7 @@ select
 	FORMAT(n.dFecNac, 'yyyyMMdd') dFecNac,
 	case when n.nSexo = 1 then 'M' else 'F' end nSexo,
 	substring((select cNomCod from CatalogoCodigos cc where ncodigo = 100 and nvalor = n.nEstadoCivil), 1, 1) nEstadoCivil,
-	'000000' ubigeo,
+	czona ubigeo,
 	left(p.cDirValor1 + p.cDirValor2 + p.cDirValor3 + p.cDirValor4 + space(54), 54) direccion,
 	left(pt.cTelefono + space(9),9) cTelefono
 from 
@@ -279,7 +279,7 @@ from
 where 
 	CarteraId = @carteraid
 	and ProductoID = @ProductoID
-GO
+go
 
 if object_id('CreditosCSV') is not null 
 	drop procedure dbo.CreditosCSV;
@@ -1262,7 +1262,7 @@ end
 if object_id('GetCreditosPorEstado') is not null 
 	drop procedure dbo.GetCreditosPorEstado;
 go
-create procedure dbo.GetCreditosPorEstado --'6,16'
+create procedure [dbo].[GetCreditosPorEstado] --'6,16'
 	@estados nvarchar(100)
 as
 select
@@ -1270,7 +1270,6 @@ select
 	n.cnombres + ' '  +  n.cApePat + ' ' + n.cApeMat  nombres,
 	(j.cRuc) ruc,
 	(j.cRazonSocial) razonSocial,
-	(select sum(monto) from CuotaPagoDeuda x where x.nCodCred = c.nCodCred and EsDeuda = 1) deuda,
 	c.*,
 	cod.nvalor codigoProducto,
 	cod.cNomCod nombreProducto,
@@ -1309,3 +1308,89 @@ where
 	and c.nCodCred not in(select nCodCred from CreditosBloqueados)
 	and cod.nvalor not in(3,4,5)
 	and c.nEstado in(select * from dbo.split_string(@estados,','))
+go
+
+
+if object_id('PagosCSV') is not null 
+	drop procedure dbo.PagosCSV;
+go
+create procedure [dbo].[PagosCSV] -- [dbo].[PagosCSV] 12
+	@pagoID int
+as
+
+select 
+	distinct
+	format(cro.dFecinicio, 'yyyyMMdd') 
+		+ format(cro.dFecVcto, 'yyyyMMdd') 
+		+ LEFT((case when c.ccodcta = '' then convert(varchar,c.ncodcred) else c.ccodcta end) + space(60), 20) campo1,
+	right(space(3) + convert(varchar,cro.nnrocuota), 2) campo2,
+	right(space(15) + convert(varchar,cro.ncapital), 15) campo3,
+	right(space(15) + convert(varchar,cro.ninterescomp + cro.npergracia), 15) campo4,
+	right(space(15) + '0.00C', 15) campo5
+from
+	pagos p
+	inner join CuotaPagoDeuda det on det.pagoid = p.pagoid
+	inner join credcronograma cro on cro.ncodcred = det.ncodcred 
+		and cro.nnrocalendario = det.nNroCalendario 
+		and cro.nnrocuota = det.nnrocuota
+	inner join creditos c on c.ncodcred = cro.ncodcred
+where 
+	p.pagoid = @pagoID
+go
+
+
+if object_id('PagosExcel') is not null 
+	drop procedure dbo.PagosExcel;
+go
+create procedure [dbo].[PagosExcel]
+	@pagoID int
+as
+
+declare @creditos table(
+	PagoID int,
+	nCodCred int,
+	nNroCalendario int,
+	nNroCuota int
+)
+insert into @creditos
+select 
+	distinct 
+	cpd.PagoID,
+	cpd.nCodCred,
+	cpd.nNroCalendario,
+	cpd.nNroCuota
+from 
+	cuotapagodeuda cpd
+	inner join credcronograma cro on cro.nCodCred = cpd.nCodCred 
+		and cro.nNroCalendario = cpd.nNroCalendario 
+		and cro.nNroCuota = cpd.nNroCuota
+where 
+	cpd.PagoID = @pagoID
+	and cpd.EsDeuda = 0
+
+select 
+	case when p.nTipoPersona = 1 then 'NATURAL' else 'JURIDICO' end Identificacion,
+	case when p.nTipoPersona = 1 then n.cDNI else j.cRUC end Identificacion,
+	case when p.nTipoPersona = 1 then n.capepat else '' end ApellidoPat,
+	case when p.nTipoPersona = 1 then n.capemat else '' end ApellidoMat,
+	case when p.nTipoPersona = 1 then n.cnombres else j.crazonsocial end Nombres,
+	case when c.cCodCta != null and c.cCodCta != '' then c.cCodCta else c.nCodCred end CodigoCredito,
+	input.nNroCuota NroCuota,
+	CONVERT(varchar, pagos.creado,103) FechaPago,
+	cro.nPerGracia PeriodoGracia,
+	cro.ninterescomp Interes,
+	cro.ncapital Amortizacion,
+	0 Encaje,
+	cro.nPerGracia + cro.ninterescomp + cro.ncapital TotalCuota
+from
+	@creditos input
+	inner join Pagos on pagos.PagoID = input.PagoID 
+	inner join credcronograma cro on input.nCodCred = cro.ncodcred
+		and input.nNroCalendario = cro.nnrocalendario
+		and input.nnrocuota = cro.nnrocuota	
+	inner join creditos c on cro.ncodcred = c.ncodcred
+	inner join credpersonas cp on c.ncodcred = cp.ncodcred
+	inner join persona p on cp.ncodpers = p.ncodpers
+	left join personajur j on j.ncodpers = p.ncodpers
+	left join personanat n on n.ncodpers = p.ncodpers
+go

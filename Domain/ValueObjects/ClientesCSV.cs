@@ -6,13 +6,16 @@ namespace Domain.ValueObjects
 {
     public class ClientesCSV
 	{
-		public string id { get; set; }
-		public string nombre { get; set; }
-		public string dFecNac { get; set; }
-		public string nSexo { get; set; }
-		public string nEstadoCivil { get; set; }
-		public string ubigeo { get; set; }
-		public string direccion { get; set; }
-		public string cTelefono { get; set; }
+		public string TipoDocumento { get; set; }
+		public string Id { get; set; }
+		public string ApePat { get; set; }
+		public string ApeMat { get; set; }
+		public string Nombres { get; set; }
+		public string FechaNacimiento { get; set; }
+		public string Sexo { get; set; }
+		public string EstadoCivil { get; set; }
+		public string Ubigeo { get; set; }
+		public string Direccion { get; set; }
+		public string Telefono { get; set; }
 	}
 }

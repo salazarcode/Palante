@@ -8,7 +8,7 @@ namespace Domain.Contracts.Repositories
 {
     public interface ICronogramaRepository
     {
-        Task<List<Cronograma>> GetCronogramasPalante(int nCodCred);
-        Task<List<Cronograma>> GetCronogramasFondeador(int nCodCred);
+        Task<List<Cronograma>> GetCronogramasPalante(string codigo, bool ConUltimoCalendario);
+        Task<List<Cronograma>> GetCronogramasFondeador(string codigo, bool ConUltimoCalendario);
     }
 }

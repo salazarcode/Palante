@@ -18,14 +18,15 @@ namespace DAL.Repositories
         {
         }
 
-        public async Task<List<Cronograma>> GetCronogramasPalante(int nCodCred)
+        public async Task<List<Cronograma>> GetCronogramasPalante(string codigo, bool ConUltimoCalendario)
         {
             try
             {
-                string query = @"dbo.GetCronogramas 1,@nCodCred";
+                string query = @"dbo.GetCronogramas 1,@codigo";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@nCodCred", nCodCred);
+                param.Add("@codigo", codigo);
+                param.Add("@ultimo", ConUltimoCalendario);
 
                 var cronogramaDictionary = new Dictionary<int, Cronograma>();
 
@@ -47,7 +48,7 @@ namespace DAL.Repositories
                         return cronogramaEntry;
                     },
                     param,
-                    splitOn: "nCodCred");
+                    splitOn: "CodigoCredito");
 
                 return list.Distinct().ToList();
             }
@@ -56,14 +57,15 @@ namespace DAL.Repositories
                 throw ex;
             }
         }
-        public async Task<List<Cronograma>> GetCronogramasFondeador(int nCodCred)
+        public async Task<List<Cronograma>> GetCronogramasFondeador(string codigo, bool ConUltimoCalendario)
         {
             try
             {
-                string query = @"dbo.GetCronogramas 2,@nCodCred";
+                string query = @"dbo.GetCronogramas 2,@codigo";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@nCodCred", nCodCred);
+                param.Add("@codigo", codigo);
+                param.Add("@ultimo", ConUltimoCalendario);
 
                 var cronogramaDictionary = new Dictionary<int, Cronograma>();
 
@@ -85,7 +87,7 @@ namespace DAL.Repositories
                         return cronogramaEntry;
                     },
                     param,
-                    splitOn: "nCodCred");
+                    splitOn: "CodigoCredito");
 
                 return list.Distinct().ToList();
             }

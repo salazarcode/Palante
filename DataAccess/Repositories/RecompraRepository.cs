@@ -9,13 +9,16 @@ using System.Linq;
 using Dapper;
 using Dapper.Mapper;
 using System.Data.SqlClient;
+using Domain.ValueObjects;
 
 namespace DAL.Repositories
 {
     public class RecompraRepository : SuperRepository, IRecompraRepository
     {
-        public RecompraRepository(IConfiguration configuration) : base(configuration)
+        public ICreditoRepository _creditosRepository { get; set; }
+        public RecompraRepository(IConfiguration configuration, ICreditoRepository creditosRepository) : base(configuration)
         {
+            _creditosRepository = creditosRepository;
         }
 
         public async Task<int> Add(int RecompraID, int nCodCred)
@@ -44,10 +47,11 @@ namespace DAL.Repositories
             {
                 string query = @"
                     select 
-	                    p.*, c.*
+	                    r.*, c.*
                     from 
-                        ventacartera.Recompras p 
-                        inner join creditos c on c.Recompraid = p.Recompraid
+                        Recompras r 
+                        inner join creditorecompra cr on cr.recompraid = r.recompraid
+                        inner join creditos c on c.ncodcred = cr.ncodcred
                     ";
 
                 var orderDictionary = new Dictionary<int, Recompra>();
@@ -70,7 +74,7 @@ namespace DAL.Repositories
                         RecompraEntry.Creditos.Add(credito);
                         return RecompraEntry;
                     },
-                    splitOn: "RecompraID");
+                    splitOn: "nCodCred");
 
                 return list.Distinct().ToList();
             }
@@ -100,13 +104,13 @@ namespace DAL.Repositories
             }
         }
 
-        public async Task<int> Delete(int RecompraID)
+        public async Task<int> Delete(Recompra entity)
         {
             try
             {
                 string query = "exec [EliminarRecompra] @RecompraID";
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@RecompraID", RecompraID);
+                param.Add("@RecompraID", entity.RecompraID);
 
                 var res = await Execute(query, param);
 
@@ -119,14 +123,60 @@ namespace DAL.Repositories
             }
         }
 
-        public Task<int> Delete(Recompra entity)
+        public async Task<List<Recompra>> Find(Recompra recompra)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                string query = @"
+                    select 
+	                    r.*, c.*
+                    from 
+                        Recompras r 
+                        inner join creditorecompra cr on cr.recompraid = r.recompraid
+                        inner join creditos c on c.ncodcred = cr.ncodcred
+                    where
+                        r.recompraid =" + recompra.RecompraID;
 
-        public Task<List<Recompra>> Find(Recompra recompra)
-        {
-            throw new NotImplementedException();
+                var orderDictionary = new Dictionary<int, Recompra>();
+
+
+                using var conn = new SqlConnection(_connectionString);
+                var list = await conn.QueryAsync<Recompra, Credito, Recompra>(
+                    query,
+                    (Recompra, credito) =>
+                    {
+                        Recompra RecompraEntry;
+
+                        if (!orderDictionary.TryGetValue(Recompra.RecompraID, out RecompraEntry))
+                        {
+                            RecompraEntry = Recompra;
+                            RecompraEntry.Creditos = new List<Credito>();
+                            orderDictionary.Add(RecompraEntry.RecompraID, RecompraEntry);
+                        }
+
+                        RecompraEntry.Creditos.Add(credito);
+                        return RecompraEntry;
+                    },
+                    splitOn: "nCodCred");
+
+
+                var res = list.Distinct().ToList();
+
+                var creditosStr = String.Join(",", res.First().Creditos.Select(x => x.nCodCred));
+                var creditosCompletos = await _creditosRepository.Search(new CreditoSearch() { 
+                    Tipo = "credito",
+                    Query = creditosStr,
+                    Fecha = DateTime.Now
+                });
+
+                res.First().Creditos = creditosCompletos;
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<int> Remove(int RecompraID, int nCodCred)
@@ -153,17 +203,16 @@ namespace DAL.Repositories
         {
             try
             {
-                var CreadoPor = entity.CreadoPor;
-                var Fondeador = entity.Fondeador.FondeadorID;
                 var creditos = String.Join(',', entity.Creditos.Select(x => x.nCodCred.ToString()));
 
                 if (entity.RecompraID == 0)
                 {
-                    string query = "exec [CrearRecompra] @CreadoPor, @Fondeadora, @creditos";
+                    string query = "exec [CrearRecompra] @CreadoPor, @FondeadorID, @ProductoID, @creditos";
 
                     Dictionary<string, object> param = new Dictionary<string, object>();
-                    param.Add("@CreadoPor", CreadoPor);
-                    param.Add("@Fondeadora", Fondeador);
+                    param.Add("@CreadoPor", entity.CreadoPor);
+                    param.Add("@FondeadorID", entity.Fondeador.FondeadorID);
+                    param.Add("@ProductoID", entity.Producto.nValor);
                     param.Add("@creditos", creditos);
 
                     var res = await Execute(query, param);
@@ -172,11 +221,13 @@ namespace DAL.Repositories
                 }
                 else
                 {
-                    string query = @"exec EditarRecompra @RecompraID, @Fondeador, @creditos";
+                    string query = @"exec EditarRecompra @RecompraID, @FondeadorID, @ProductoID, @creditos";
 
                     Dictionary<string, object> param = new Dictionary<string, object>();
                     param.Add("@RecompraID", entity.RecompraID);
-                    param.Add("@Fondeador", entity.Fondeador.FondeadorID);
+                    param.Add("@CreadoPor", entity.CreadoPor);
+                    param.Add("@FondeadorID", entity.Fondeador.FondeadorID);
+                    param.Add("@ProductoID", entity.Producto.nValor);
                     param.Add("@creditos", creditos);
 
                     var res = await Execute(query, param);

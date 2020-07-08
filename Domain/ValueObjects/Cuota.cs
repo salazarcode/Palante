@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Domain.Entities
+namespace Domain.ValueObjects
 {
-    public class Cuota
+    public class CuotaVO
     {
         public string CodigoCredito { get; set; }
         public string NumeroCuota { get; set; }
@@ -14,7 +14,5 @@ namespace Domain.Entities
         public string PeriodoGracia { get; set; }
         public string Encaje { get; set; }
         public string TotalCuota { get; set; }
-        public int nEstado { get; set; }
-        public int nEstadoCuota { get; set; }
     }
 }

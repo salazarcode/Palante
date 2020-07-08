@@ -131,13 +131,31 @@ namespace DAL.Repositories
             }
         }
 
+        public async Task<List<PagosExcel>> GetPagosExcel(int PagoID)
+        {
+            try
+            {
+                string query = "exec dbo.PagosExcel @PagoID";
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@PagoID", PagoID);
+
+                var res = await Query<PagosExcel>(query, param);
+
+                return res.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<List<PagosCSV>> GetPagosCSV(int PagoID)
         {
             try
             {
                 string query = "exec dbo.PagosCSV @PagoID";
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@PagoID", PagoID);   
+                param.Add("@PagoID", PagoID);
 
                 var res = await Query<PagosCSV>(query, param);
 

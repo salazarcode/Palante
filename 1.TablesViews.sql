@@ -69,9 +69,10 @@ CREATE TABLE [Fondeadores](
 	[evaluador] [varchar](100) NULL)
 GO
 
-CREATE TABLE [Recompras](
+CREATE TABLE [dbo].[Recompras](
 	[RecompraID] [int] IDENTITY(1,1) NOT NULL,
-	[FondeadorId] [int] NULL,
+	[FondeadorID] [int] NULL,
+	[ProductoID] [int] NULL,
 	[Creado] [datetime] NULL,
 	[Modificado] [datetime] NULL,
 	[FechaCierre] [datetime] NULL,

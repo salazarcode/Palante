@@ -164,13 +164,14 @@ namespace GestionCartera.API.Controllers
             {
                 Directory.CreateDirectory(ruta);
 
-                var pago = await _ReporteService.GetPagosCSV(PagoID);
+                var pagosCSV = await _ReporteService.GetPagosCSV(PagoID);
+                var pagosExcel = await _ReporteService.GetPagosExcel(PagoID);
 
                 var absPagosCSV = ruta + "/" + "pago.txt";
-                FileGenerator.CSV<PagosCSV>(pago, absPagosCSV);
+                FileGenerator.CSV<PagosCSV>(pagosCSV, absPagosCSV);
 
                 var absPagoExcel = ruta + "/" + "pago.xlsx";
-                FileGenerator.Excel<PagosCSV>(pago, "Pago" + PagoID, absPagoExcel);
+                FileGenerator.Excel<PagosExcel>(pagosExcel, "Pago" + PagoID, absPagoExcel);
             }
 
             string zipDir = _dir + GetRandom(10);

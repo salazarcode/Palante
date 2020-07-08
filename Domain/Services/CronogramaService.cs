@@ -17,11 +17,11 @@ namespace Domain.Services
             _CronogramaRepo = CronogramaRepo;
         }
 
-        public async Task<List<Cronograma>> GetCronogramasPalante(int nCodCred)
+        public async Task<List<Cronograma>> GetCronogramasPalante(string codigo, bool ConUltimoCalendario = false)
         {
             try
             {
-                var res = await _CronogramaRepo.GetCronogramasPalante(nCodCred);
+                var res = await _CronogramaRepo.GetCronogramasPalante(codigo, ConUltimoCalendario);
                 return res;
             }
             catch (Exception e)
@@ -30,11 +30,11 @@ namespace Domain.Services
             }
         }
 
-        public async Task<List<Cronograma>> GetCronogramasFondeador(int nCodCred)
+        public async Task<List<Cronograma>> GetCronogramasFondeador(string codigo, bool ConUltimoCalendario = false)
         {
             try
             {
-                var res = await _CronogramaRepo.GetCronogramasFondeador(nCodCred);
+                var res = await _CronogramaRepo.GetCronogramasFondeador(codigo, ConUltimoCalendario);
                 return res;
             }
             catch (Exception e)

@@ -8,6 +8,9 @@ namespace Domain.Entities
     {
         public int RecompraID { get; set; }
         public Fondeador Fondeador { get; set; }
+        public Producto Producto { get; set; }
+        public int FondeadorID { get; set; }
+        public int ProductoID { get; set; }
         public DateTime Creado { get; set; }
         public DateTime Modificado { get; set; }
         public DateTime FechaCierre { get; set; }

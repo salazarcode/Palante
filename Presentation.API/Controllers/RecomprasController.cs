@@ -38,8 +38,13 @@ namespace GestionCartera.API.Controllers
                 Recompra res = new Recompra
                 {
                     RecompraID = intake.RecompraID,
-                    Fondeador = new Fondeador { 
+                    Fondeador = new Fondeador
+                    {
                         FondeadorID = intake.FondeadorID
+                    },
+                    Producto = new Producto
+                    {
+                        nValor = intake.ProductoID
                     },
                     Creditos = new List<Credito>()
                 };
@@ -151,6 +156,26 @@ namespace GestionCartera.API.Controllers
             try
             {
                 var res = await _RecompraService.Delete(RecompraID);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        /// <summary>
+        /// Eliminar Recompra
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Find")]
+        public async Task<Recompra> Find(int RecompraID)
+        {
+            try
+            {
+                var res = await _RecompraService.Find(RecompraID);
                 return res;
             }
             catch (Exception ex)

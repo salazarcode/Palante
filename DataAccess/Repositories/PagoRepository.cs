@@ -47,9 +47,9 @@ namespace DAL.Repositories
                 var dict = new Dictionary<int, Pago>();
 
                 using var conn = new SqlConnection(_connectionString);
-                var list = await conn.QueryAsync<Pago, PagoDetalle, Fondeador, Producto, Pago>(
+                var list = await conn.QueryAsync<Pago, PagoDetalle, Fondeador, Producto, PagoConcepto, Pago>(
                     query,
-                    (pago, detalle, fondeador, producto) =>
+                    (pago, detalle, fondeador, producto, pagoConcepto) =>
                     {
                         Pago pagoEntry;
 
@@ -62,11 +62,13 @@ namespace DAL.Repositories
                             dict.Add(pagoEntry.PagoID, pagoEntry);
                         }
 
+                        detalle.PagoConcepto = pagoConcepto;
+
                         pagoEntry.Detalles.Add(detalle);
                         return pagoEntry;
                     },
                     param,
-                    splitOn: "PagoID,FondeadorID,nCodigo");
+                    splitOn: "PagoID,FondeadorID,nCodigo,PagoConceptoID");
 
                 return list.Distinct().ToList();
             }

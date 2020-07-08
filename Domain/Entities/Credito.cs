@@ -15,6 +15,7 @@ namespace Domain.Entities
         public int nEstado { get; set; }
         public int nNroCuotas { get; set; }
         public double nMontoCuota { get; set; }
+        public int FondeadorID{ get; set; }
         public Persona Persona { get; set; }
         public string dni { get; set; }
         public string nombres { get; set; }
@@ -28,6 +29,8 @@ namespace Domain.Entities
         public int codigoProducto { get; set; }
         public string nombreProducto { get; set; }
         public int pages { get; set; }
+        public decimal nTasaComp { get; set; }
+        public decimal nTasaMor { get; set; }
         public List<Cronograma> CronogramasPalante { get; set; }
         public List<Cronograma> CronogramasFondeador { get; set; }
         public decimal deuda { get; set; }

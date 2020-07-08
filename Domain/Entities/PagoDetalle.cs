@@ -12,5 +12,6 @@ namespace Domain.Entities
         public int nNroCuota { get; set; }
         public decimal Monto { get; set; }
         public bool EsDeuda { get; set; }
+        public PagoConcepto PagoConcepto { get; set; }
     }
 }

@@ -16,6 +16,7 @@ namespace Domain.Contracts.Services
 
         Task<List<ResumenYapamotors>> ResumenYapamotors(int CarteraID, int ProductoID);
         Task<List<AnexoYapamotors>> AnexoYapamotors(int CarteraID, int ProductoID);
+        Task<List<PagosExcel>> GetPagosExcel(int PagoID);
         Task<List<PagosCSV>> GetPagosCSV(int PagoID);
     }
 }

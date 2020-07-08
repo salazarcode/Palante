@@ -97,6 +97,19 @@ namespace Domain.Services
             }
         }
 
+        public async Task<List<PagosExcel>> GetPagosExcel(int PagoID)
+        {
+            try
+            {
+                var res = await _ReporteRepo.GetPagosExcel(PagoID);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public async Task<List<PagosCSV>> GetPagosCSV(int PagoID)
         {
             try
