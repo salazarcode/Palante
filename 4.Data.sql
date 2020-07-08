@@ -1,12 +1,14 @@
-﻿/*
+﻿
 
 insert into Fondeadores values('Coopac', '', 'dbo.Coopac')
 insert into Fondeadores values('Capital', '', 'dbo.Capital') 
 
 insert into usuarios values('Kelly Robles', 0,'krobles', '12345', null, getdate())
+insert into usuarios values('Patricia Amaya', 0,'pamaya', '12345', null, getdate())
 insert into roles values('Administrador', getdate())
 insert into RolUsuario values(1, 1)
-
+insert into RolUsuario values(1, 2)
+/*
 --crear una cartera normal
 exec dbo.CrearCartera 1, 2, 'krobles', '123529', '20200501';
 

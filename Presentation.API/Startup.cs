@@ -41,7 +41,7 @@ namespace GestionCartera.API
             services.AddSingleton<IRecompraRepository,  RecompraRepository>();
             services.AddSingleton<IPagoRepository,      PagoRepository>();
             services.AddSingleton<ICronogramaRepository, CronogramaRepository>();
-            services.AddSingleton<IReprogramacionRepository, ReprogramacionRepository>();
+            services.AddSingleton<IAmortizacionRepository, AmotizacionRepository>();
 
             services.AddSingleton<IClienteService, ClienteService>();
             services.AddSingleton<ICreditoService, CreditoService>();
@@ -53,7 +53,7 @@ namespace GestionCartera.API
             services.AddSingleton<IRecompraService,  RecompraService>();
             services.AddSingleton<IPagoService,  PagoService>();
             services.AddSingleton<ICronogramaService, CronogramaService>();
-            services.AddSingleton<IReprogramacionService, ReprogramacionService>();
+            services.AddSingleton<IAmortizacionService, AmortizacionService>();
 
             services.AddCors(options => {
                 options.AddPolicy("default", builder => {

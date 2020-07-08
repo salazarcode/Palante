@@ -12,22 +12,22 @@ using System.Data.SqlClient;
 
 namespace DAL.Repositories
 {
-    public class ReprogramacionRepository : SuperRepository, IReprogramacionRepository
+    public class AmotizacionRepository : SuperRepository, IAmortizacionRepository
     {
-        public ReprogramacionRepository(IConfiguration configuration) : base(configuration)
+        public AmotizacionRepository(IConfiguration configuration) : base(configuration)
         {
         }
 
-        public async Task<List<Reprogramacion>> All(Paginacion paginacion = null)
+        public async Task<List<Amortizacion>> All(Paginacion paginacion = null)
         {
             try
             {
-                string query = @"dbo.GetReprogramacion @ReprogramacionID";
+                string query = @"dbo.GetAmortizacion @AmortizacionID";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@ReprogramacionID", paginacion.ReprogramacionID);
+                param.Add("@AmortizacionID", paginacion.AmortizacionID);
 
-                return await Query<Reprogramacion>(query, param);
+                return await Query<Amortizacion>(query, param);
             }
             catch (Exception ex)
             {
@@ -35,14 +35,14 @@ namespace DAL.Repositories
             }
         }
 
-        public async Task<int> Delete(Reprogramacion entity)
+        public async Task<int> Delete(Amortizacion entity)
         {
             try
             {
-                string query = @"delete from dbo.Reprogramaciones where ReprogramacionID = @ReprogramacionID";
+                string query = @"delete from dbo.Amortizaciones where AmortizacionID = @AmortizacionID";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@ReprogramacionID", entity.ReprogramacionID);
+                param.Add("@AmortizacionID", entity.AmortizacionID);
 
                 return await Execute(query, param);
             }
@@ -52,16 +52,16 @@ namespace DAL.Repositories
             }
         }
 
-        public async Task<List<Reprogramacion>> Find(Reprogramacion input)
+        public async Task<List<Amortizacion>> Find(Amortizacion input)
         {
             try
             {
-                string query = @"dbo.GetReprogramacion @ReprogramacionID";
+                string query = @"dbo.GetAmortizacion @AmortizacionID";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@ReprogramacionID", input.ReprogramacionID);
+                param.Add("@AmortizacionID", input.AmortizacionID);
 
-                return await Query<Reprogramacion>(query, param);
+                return await Query<Amortizacion>(query, param);
             }
             catch (Exception ex)
             {
@@ -69,12 +69,12 @@ namespace DAL.Repositories
             }
         }
 
-        public async Task<int> Save(Reprogramacion entity)
+        public async Task<int> Save(Amortizacion entity)
         {
             try
             {
-                string query = @"dbo.GuardarReprogramacion 
-                                        @ReprogramacionID, 
+                string query = @"dbo.GuardarAmortizacion 
+                                        @AmortizacionID, 
                                         @Tasa,
                                         @SaldoCapital,
                                         @NuevoCapital,
@@ -84,7 +84,7 @@ namespace DAL.Repositories
                                         @Factor,
                                         @InteresesTranscurridos,
                                         @KI,
-                                        @Amortizacion,
+                                        @nAmortizacion,
                                         @Capital,
                                         @nCodCred,
                                         @Total,
@@ -93,7 +93,7 @@ namespace DAL.Repositories
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
 
-                param.Add("@ReprogramacionID", entity.ReprogramacionID);
+                param.Add("@ReprogramacionID", entity.AmortizacionID);
                 param.Add("@Tasa", entity.Tasa);
                 param.Add("@SaldoCapital", entity.SaldoCapital);
                 param.Add("@NuevoCapital", entity.NuevoCapital);
@@ -103,7 +103,7 @@ namespace DAL.Repositories
                 param.Add("@Factor", entity.Factor);
                 param.Add("@InteresesTranscurridos", entity.InteresesTranscurridos);
                 param.Add("@KI", entity.KI);
-                param.Add("@Amortizacion", entity.Amortizacion);
+                param.Add("@nAmortizacion", entity.nAmortizacion);
                 param.Add("@nCodCred", entity.nCodCred);
                 param.Add("@Capital", entity.Capital);
                 param.Add("@Total", entity.Total);

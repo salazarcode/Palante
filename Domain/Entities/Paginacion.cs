@@ -10,6 +10,6 @@ namespace Domain.Entities
         public int pagesize { get; set; }
         public int producto { get; set; }
         public bool repro { get; set; }
-        public int ReprogramacionID { get; set; }
+        public int AmortizacionID { get; set; }
     }
 }
