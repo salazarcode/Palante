@@ -11,26 +11,26 @@ namespace GestionCartera.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class ReprogramacionController : ControllerBase
+    public class AmortizacionController : ControllerBase
     {
-        private readonly IReprogramacionService _ReprogramacionService;
+        private readonly IAmortizacionService _AmortizacionService;
 
-        public ReprogramacionController(IReprogramacionService ReprogramacionService)
+        public AmortizacionController(IAmortizacionService AmortizacionService)
         {
-            _ReprogramacionService = ReprogramacionService;
+            _AmortizacionService = AmortizacionService;
         }
 
         /// <summary>
-        /// Lista las Reprogramacion existentes
+        /// Lista las Amortizacion existentes
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Route("All")]
-        public async Task<IEnumerable<Reprogramacion>> All()
+        public async Task<IEnumerable<Amortizacion>> All()
         {
             try
             {
-                var res = await _ReprogramacionService.All();
+                var res = await _AmortizacionService.All();
                 return res;
             }
             catch (Exception e)
@@ -40,16 +40,16 @@ namespace GestionCartera.API.Controllers
         }
 
         /// <summary>
-        /// Lista las Reprogramacion existentes
+        /// Lista las Amortizacion existentes
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Route("Find")]
-        public async Task<Reprogramacion> Find(int input)
+        public async Task<Amortizacion> Find(int input)
         {
             try
             {
-                var res = await _ReprogramacionService.Find(input);
+                var res = await _AmortizacionService.Find(input);
                 return res;
             }
             catch (Exception e)
@@ -59,16 +59,16 @@ namespace GestionCartera.API.Controllers
         }
 
         /// <summary>
-        /// Guarda un Reprogramacion
+        /// Guarda un Amortizacion
         /// </summary>
         /// <returns></returns>
         [HttpPost]
         [Route("Save")]
-        public async Task<int> Save([FromBody] Reprogramacion input)
+        public async Task<int> Save([FromBody] Amortizacion input)
         {
             try
             {
-                var res = await _ReprogramacionService.Save(input);
+                var res = await _AmortizacionService.Save(input);
                 return res;
             }
             catch (Exception e)
@@ -79,7 +79,7 @@ namespace GestionCartera.API.Controllers
         }
 
         /// <summary>
-        /// Elimina un Reprogramacion
+        /// Elimina un Amortizacion
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -88,7 +88,7 @@ namespace GestionCartera.API.Controllers
         {
             try
             {
-                var res = await _ReprogramacionService.Delete(input);
+                var res = await _AmortizacionService.Delete(input);
                 return res;
             }
             catch (Exception e)

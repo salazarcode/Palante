@@ -9,19 +9,19 @@ using System;
 
 namespace Domain.Services
 {
-    public class ReprogramacionService : IReprogramacionService
+    public class AmortizacionService : IAmortizacionService
     {
-        private readonly IReprogramacionRepository _ReprogramacionRepo;
-        public ReprogramacionService(IReprogramacionRepository ReprogramacionRepo)
+        private readonly IAmortizacionRepository _AmortizacionRepo;
+        public AmortizacionService(IAmortizacionRepository AmortizacionRepo)
         {
-            _ReprogramacionRepo = ReprogramacionRepo;
+            _AmortizacionRepo = AmortizacionRepo;
         }
 
-        public async Task<List<Reprogramacion>> All()
+        public async Task<List<Amortizacion>> All()
         {
             try
             {
-                var res = await _ReprogramacionRepo.All(new Paginacion() { });
+                var res = await _AmortizacionRepo.All(new Paginacion() { });
                 return res;
             }
             catch (Exception e)
@@ -30,11 +30,11 @@ namespace Domain.Services
             }
         }
 
-        public async Task<int> Delete(int ReprogramacionID)
+        public async Task<int> Delete(int AmortizacionID)
         {
             try
             {
-                var res = await _ReprogramacionRepo.Delete(new Reprogramacion() { ReprogramacionID = ReprogramacionID});
+                var res = await _AmortizacionRepo.Delete(new Amortizacion() { AmortizacionID = AmortizacionID });
                 return res;
             }
             catch (Exception e)
@@ -43,11 +43,11 @@ namespace Domain.Services
             }
         }
 
-        public async Task<Reprogramacion> Find(int ReprogramacionID)
+        public async Task<Amortizacion> Find(int AmortizacionID)
         {
             try
             {
-                var res = await _ReprogramacionRepo.Find(new Reprogramacion() { ReprogramacionID = ReprogramacionID });
+                var res = await _AmortizacionRepo.Find(new Amortizacion() { AmortizacionID = AmortizacionID });
                 return res.First();
             }
             catch (Exception e)
@@ -56,11 +56,11 @@ namespace Domain.Services
             }
         }
 
-        public async Task<int> Save(Reprogramacion input)
+        public async Task<int> Save(Amortizacion input)
         {
             try
             {
-                var res = await _ReprogramacionRepo.Save(input);
+                var res = await _AmortizacionRepo.Save(input);
                 return res;
             }
             catch (Exception e)

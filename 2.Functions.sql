@@ -195,3 +195,115 @@ BEGIN
     RETURN 
 END
 go
+
+
+if object_id('CuotaDeudaToRow') is not null 
+	drop function dbo.CuotaDeudaToRow;
+go
+CREATE function [dbo].[CuotaDeudaToRow](
+	@input nvarchar(max)
+)
+RETURNS @res TABLE(
+	nCodCred int,
+	nNroCalendario int,
+	nNroCuota int,
+	Monto decimal(10,2),
+	EsDeuda bit
+)
+as
+begin
+	declare @delimiter char(1) = ',';
+
+	declare @length int = 0;
+	declare @start int = 1;
+
+	declare @nCodCred int;
+	declare @nNroCalendario int;
+	declare @nNroCuota int;
+	declare @Monto decimal(10,2);
+	declare @EsDeuda bit;
+
+	--Primer elemento
+	select @length = charindex(@delimiter, @input)
+	select @nCodCred = substring(@input, 1, @length - 1 )
+	set @input = substring(@input, @length + 1, len(@input))
+
+	--Segundo elemento
+	select @length = charindex(@delimiter, @input)
+	select @nNroCalendario = substring(@input, 1, @length - 1 )
+	set @input = substring(@input, @length + 1, len(@input))
+
+	--Tercer elemento
+	select @length = charindex(@delimiter, @input)
+	select @nNroCuota = substring(@input, 1, @length - 1 )
+	set @input = substring(@input, @length + 1, len(@input))
+
+	--Cuarto elemento
+	select @length = charindex(@delimiter, @input)
+	select @Monto = substring(@input, 1, @length - 1 )
+	set @input = substring(@input, @length + 1, len(@input))
+
+	--Último elemento
+	select @EsDeuda = @input
+
+	insert into @res
+	select convert(int,@nCodCred), convert(int,@nNroCalendario), convert(int,@nNroCuota), convert(decimal(10,2),@Monto), convert(bit,@EsDeuda)
+
+	return
+end
+GO
+
+if object_id('CuotaDeudaToTable') is not null 
+	drop function dbo.CuotaDeudaToTable;
+go
+create function [dbo].[CuotaDeudaToTable](
+	@input nvarchar(max)
+)
+RETURNS @res TABLE(
+	nCodCred int,
+	nNroCalendario int,
+	nNroCuota int,
+	Monto decimal(10,2),
+	EsDeuda bit
+)
+as
+begin
+	declare @tabla1 table(n int, valor nvarchar(max));
+	insert into @tabla1
+	select ROW_NUMBER() OVER(ORDER BY tuple ASC) AS n, tuple from dbo.split_string(@input,';');
+
+	declare @tabla2 TABLE(
+		nCodCred int,
+		nNroCalendario int,
+		nNroCuota int,
+		Monto decimal(10,2),
+		EsDeuda bit
+	);
+
+	declare @length int = (select count(*) from @tabla1);
+	declare @n int = 1;
+	declare @linea nvarchar(max) = '';
+
+	while @n <= @length
+	begin
+		set @linea = '';
+		select @linea = valor from @tabla1 where n = @n;
+		insert into @tabla2( 
+			nCodCred,
+			nNroCalendario,
+			nNroCuota,
+			Monto,
+			EsDeuda	
+		)
+		select * from dbo.CuotaDeudaToRow(@linea)
+		set @n = @n + 1;
+	end
+
+	insert into @res
+	select * from @tabla2
+
+	return
+end
+GO
+
+

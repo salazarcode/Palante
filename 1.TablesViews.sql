@@ -1,19 +1,11 @@
-﻿if object_id('carteracredito') is not null		drop table carteracredito;
-if object_id('carteras') is not null			drop table carteras;
-if object_id('creditorecompra') is not null		drop table creditorecompra;
-if object_id('cuotapago') is not null			drop table cuotapago;
-if object_id('fondeadores') is not null			drop table fondeadores;
-if object_id('pagos') is not null				drop table pagos;
-if object_id('recompras') is not null			drop table recompras;
-if object_id('roles') is not null				drop table roles;
-if object_id('rolusuario') is not null			drop table rolusuario;
-if object_id('usuarios') is not null			drop table usuarios;
-if object_id('CreditosBloqueados') is not null  drop table CreditosBloqueados;
-if object_id('creditosparaventacartera') is not null drop view dbo.creditosparaventacartera;
-if object_id('CronogramasAlternativos') is not null  drop table CronogramasAlternativos;
-go
-
-CREATE TABLE [CarteraCredito](
+﻿/*
+* CARTERAS
+*
+*
+**/
+/*
+if object_id('CarteraCredito') is not null		drop table CarteraCredito;
+CREATE TABLE dbo.[CarteraCredito](
 	[CarteraId] [int] NOT NULL,
 	[ProductoID] [int] NOT NULL,
 	[nCodCred] [int] NOT NULL,
@@ -26,7 +18,8 @@ PRIMARY KEY
 ))
 GO
 
-CREATE TABLE [Carteras](
+if object_id('Carteras') is not null		drop table Carteras;
+CREATE TABLE dbo.[Carteras](
 	[CarteraID] [int],
 	[ProductoID] [int],
 	[FondeadorID] [int],
@@ -40,74 +33,20 @@ CREATE TABLE [Carteras](
 )
 GO
 
-CREATE TABLE [CreditoRecompra](
-	[RecompraID] [int] NOT NULL,
+if object_id('CreditoFondeador') is not null		drop table CreditoFondeador;
+CREATE TABLE [dbo].[CreditoFondeador](
 	[nCodCred] [int] NOT NULL,
+	[FondeadorID] [int] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
-	[RecompraID] ASC,
-	[nCodCred] ASC
-))
-GO
-
-CREATE TABLE [CuotaPago](
-	[PagoID] [int] NOT NULL,
-	[nCodCred] [int] NOT NULL,
-	[nNroCuota] [int] NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[PagoID] ASC,
 	[nCodCred] ASC,
-	[nNroCuota] ASC
-))
-GO
-
-CREATE TABLE [Fondeadores](
-	[FondeadorID] [int] IDENTITY(1,1) NOT NULL,
-	[Nombre] [varchar](100) NULL,
-	[Color] [varchar](50) NULL,
-	[evaluador] [varchar](100) NULL)
-GO
-
-CREATE TABLE [dbo].[Recompras](
-	[RecompraID] [int] IDENTITY(1,1) NOT NULL,
-	[FondeadorID] [int] NULL,
-	[ProductoID] [int] NULL,
-	[Creado] [datetime] NULL,
-	[Modificado] [datetime] NULL,
-	[FechaCierre] [datetime] NULL,
-	[CreadoPor] [varchar](100) NULL
+	[FondeadorID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
 
-CREATE TABLE [Roles](
-	[RolID] [int] IDENTITY(1,1) NOT NULL,
-	[Nombre] [varchar](100) NULL,
-	[Creado] [datetime] NULL)
-GO
-
-CREATE TABLE [RolUsuario](
-	[RolID] [int] NOT NULL,
-	[UsuarioID] [int] NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[RolID] ASC,
-	[UsuarioID] ASC
-))
-GO
-
-CREATE TABLE [Usuarios](
-	[UsuarioID] [int] IDENTITY(1,1) NOT NULL,
-	[NombreCompleto] [varchar](max) NULL,
-	[Sexo] bit,
-	[Nombre] [varchar](100) NULL,
-	[Clave] [varchar](100) NULL,
-	[SesionToken] [varchar](100) NULL,
-	[Creado] [datetime] NULL
-)
-GO
-
-CREATE TABLE [CreditosBloqueados](
+if object_id('CreditosBloqueados') is not null		drop table CreditosBloqueados;
+CREATE TABLE dbo.[CreditosBloqueados](
 	[nCodCred] [int] NOT NULL,
 	[CarteraID] [int] NOT NULL,
 	[ProductoID] [int] NOT NULL,
@@ -119,7 +58,24 @@ PRIMARY KEY CLUSTERED
 ))
 GO
 
-CREATE view [CreditosParaVentaCartera] as
+if object_id('CronogramasAlternativos') is not null		drop table CronogramasAlternativos;
+create table dbo.CronogramasAlternativos(
+	nCodCred nvarchar(10),
+	nNroCuota int,
+	dFecPago datetime,
+	amortizacion decimal(10,2),
+	interes decimal(10,2),
+	periodoGracia  decimal(10,2),
+	encaje decimal(10,2),	
+	totalCuota decimal(10,2)
+
+	primary key(nCodCred, nNroCuota)
+)
+go
+
+if object_id('CreditosParaVentaCartera') is not null		drop table CreditosParaVentaCartera
+go
+CREATE view dbo.[CreditosParaVentaCartera] as
 select 
 	n.cDNI dni,
 	n.cnombres + ' '  +  n.cApePat + ' ' + n.cApeMat  nombres,
@@ -150,15 +106,170 @@ where
 	and cod.nvalor not in(3,4,5)
 GO
 
-create table dbo.CronogramasAlternativos(
-	nCodCred nvarchar(10),
-	nNroCuota int,
-	dFecPago datetime,
-	amortizacion decimal(10,2),
-	interes decimal(10,2),
-	periodoGracia  decimal(10,2),
-	encaje decimal(10,2),	
-	totalCuota decimal(10,2)
+*/
 
-	primary key(nCodCred, nNroCuota)
+/*
+* PAGOS
+*
+*
+**/
+if object_id('PagoConceptos') is not null		drop table PagoConceptos;
+CREATE TABLE [dbo].[PagoConceptos](
+	[PagoConceptoID] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [nvarchar](200) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[PagoConceptoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+if object_id('PagoDetalle') is not null		drop table PagoDetalle;
+CREATE TABLE [dbo].[PagoDetalle](
+	[PagoID] [int] NULL,
+	[nCodCred] [int] NOT NULL,
+	[nNroCalendario] [int] NOT NULL,
+	[nNroCuota] [int] NOT NULL,
+	[PagoConceptoID] [int] NULL,
+	[Monto] [decimal](10, 2) NULL,
+	[EsDeuda] [bit] NULL
+) ON [PRIMARY]
+GO
+
+if object_id('Pagos') is not null		drop table Pagos;
+CREATE TABLE [dbo].[Pagos](
+	[PagoID] [int] IDENTITY(1,1) NOT NULL,
+	[FondeadorID] [int] NULL,
+	[ProductoID] [int] NULL,
+	[CreadoPor] [varchar](100) NULL,
+	[Creado] [datetime] NULL,
+	[Modificado] [datetime] NULL,
+	[FechaCierre] [datetime] NULL
+) ON [PRIMARY]
+GO
+
+
+/*
+* RECOMPRAS
+*
+*
+**/
+if object_id('CreditoRecompra') is not null		drop table CreditoRecompra;
+CREATE TABLE [dbo].[CreditoRecompra](
+	[RecompraID] [int] NOT NULL,
+	[nCodCred] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[RecompraID] ASC,
+	[nCodCred] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+if object_id('Recompras') is not null		drop table Recompras;
+CREATE TABLE [dbo].[Recompras](
+	[RecompraID] [int] IDENTITY(1,1) NOT NULL,
+	[FondeadorID] [int] NULL,
+	[ProductoID] [int] NULL,
+	[Creado] [datetime] NULL,
+	[Modificado] [datetime] NULL,
+	[FechaCierre] [datetime] NULL,
+	[CreadoPor] [varchar](100) NULL
+) ON [PRIMARY]
+GO
+
+
+/*
+* AMORTIZACIONES
+*
+*
+**/
+if object_id('Amortizaciones') is not null		drop table Amortizaciones;
+CREATE TABLE [dbo].[Amortizaciones](
+	[AmortizacionID] [int] IDENTITY(1,1) NOT NULL,
+	[Tasa] [decimal](10, 2) NULL,
+	[SaldoCapital] [decimal](10, 2) NULL,
+	[NuevoCapital] [decimal](10, 2) NULL,
+	[UltimoVencimiento] [datetime] NULL,
+	[Hoy] [datetime] NULL,
+	[DiasTranscurridos] [int] NULL,
+	[Factor] [decimal](10, 6) NULL,
+	[InteresesTranscurridos] [decimal](10, 2) NULL,
+	[KI] [decimal](10, 2) NULL,
+	[nAmortizacion] [decimal](10, 2) NULL,
+	[Capital] [decimal](10, 2) NULL,
+	[Total] [decimal](10, 2) NULL,
+	[nCodCred] [int] NULL,
+	[NroCalendarioCOF] [int] NULL,
+	[Confirmacion] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[AmortizacionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+/*
+* FONDEADORES
+*
+*
+**/
+if object_id('Fondeadores') is not null		drop table Fondeadores;
+CREATE TABLE dbo.[Fondeadores](
+	[FondeadorID] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](100) NULL,
+	[Color] [varchar](50) NULL,
+	[evaluador] [varchar](100) NULL)
+GO
+
+
+/*
+* AUTENTICACION
+*
+*
+**/
+if object_id('Roles') is not null		drop table Roles;
+CREATE TABLE dbo.[Roles](
+	[RolID] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](100) NULL,
+	[Creado] [datetime] NULL)
+GO
+
+if object_id('RolUsuario') is not null		drop table RolUsuario;
+CREATE TABLE dbo.[RolUsuario](
+	[RolID] [int] NOT NULL,
+	[UsuarioID] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[RolID] ASC,
+	[UsuarioID] ASC
+))
+GO
+
+if object_id('Usuarios') is not null		drop table Usuarios;
+CREATE TABLE dbo.[Usuarios](
+	[UsuarioID] [int] IDENTITY(1,1) NOT NULL,
+	[NombreCompleto] [varchar](max) NULL,
+	[Sexo] bit,
+	[Nombre] [varchar](100) NULL,
+	[Clave] [varchar](100) NULL,
+	[SesionToken] [varchar](100) NULL,
+	[Creado] [datetime] NULL
 )
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

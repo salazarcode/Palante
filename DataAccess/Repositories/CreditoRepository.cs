@@ -21,43 +21,7 @@ namespace DAL.Repositories
 
         async Task<List<Credito>> IRepository<Credito>.All(Paginacion paginacion)
         {
-            try
-            {
-                string sp = paginacion.repro ? "GetCreditosPaginadosRepro" : "GetCreditosPaginados";
-                string query = "exec dbo." + sp + " @page, @pagesize, @producto";
-
-                Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@page", paginacion.page);
-                param.Add("@pagesize", paginacion.pagesize);
-                param.Add("@producto", paginacion.producto);
-
-                using var conn = new SqlConnection(_connectionString);
-                var list = await conn.QueryAsync<Credito, Producto, Credito>(
-                    query,
-                    (credito, producto) =>
-                    {
-                        credito.Producto = producto;
-                        return credito;
-                    },
-                    param,
-                    splitOn: "nCodCred,nCodigo");
-                var res = list.Distinct().ToList();
-
-                res.ForEach(ele => {
-                    var n = ele.Producto.nValor;
-                    if (n == 9 || n == 8 || n == 7 || n == 6 || n == 2)
-                    {
-                        ele.Producto.cNomCod = "YAPAMOTORS";
-                        ele.Producto.nValor = 2;
-                    }
-                });
-
-                return list.Distinct().ToList();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            throw new NotImplementedException();
         }
 
         public async Task<List<Credito>> Cumplimiento(int FondeadorID, string creditos)

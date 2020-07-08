@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Domain.Entities
 {
-    public class Reprogramacion
+    public class Amortizacion
     {
-        public int ReprogramacionID { get; set; }
+        public int AmortizacionID { get; set; }
         public decimal Tasa { get; set; }
         public decimal SaldoCapital { get; set; }
         public decimal NuevoCapital { get; set; }
@@ -16,7 +16,7 @@ namespace Domain.Entities
         public decimal Factor { get; set; }
         public decimal InteresesTranscurridos { get; set; }
         public decimal KI { get; set; }
-        public decimal Amortizacion { get; set; }
+        public decimal nAmortizacion { get; set; }
         public decimal Capital { get; set; }
         public int nCodCred { get; set; }
         public decimal Total { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Contracts.Repositories
 {
-    public interface IReprogramacionRepository : IRepository<Reprogramacion>
+    public interface IAmortizacionRepository : IRepository<Amortizacion>
     {
     }
 }

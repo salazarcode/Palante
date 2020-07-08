@@ -1,4 +1,6 @@
-﻿insert into Fondeadores values('Coopac', '', 'dbo.Coopac')
+﻿/*
+
+insert into Fondeadores values('Coopac', '', 'dbo.Coopac')
 insert into Fondeadores values('Capital', '', 'dbo.Capital') 
 
 insert into usuarios values('Kelly Robles', 0,'krobles', '12345', null, getdate())
@@ -117,3 +119,5 @@ where
 exec CrearCartera 1, 2, 'krobles', @Result, '20200501';
 
 update carteracredito set repro = 1 where carteraid = 364
+
+*/
