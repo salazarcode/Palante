@@ -11,10 +11,12 @@ namespace Domain.Entities
         public string CreadoPor { get; set; }
         public Fondeador Fondeador { get; set; }
         public DateTime Creado { get; set; }
+        public int n { get; set; }
         public DateTime Modificado { get; set; }
         public DateTime FechaDesembolso { get; set; }
         public decimal precio{ get; set; }
         public List<Credito> Creditos { get; set; }
         public Producto Producto { get; set; }
+        public bool esrepro{ get; set; }
     }
 }

@@ -1,6 +1,6 @@
 EXEC sp_dropserver 'cof', 'droplogins';		
 
-EXEC master.sp_addlinkedserver   
+EXEC sp_addlinkedserver   
  @server = 'cof',
  @srvproduct=N'sql_server',
  @provider=N'SQLOLEDB',
@@ -9,7 +9,7 @@ go
 
 ------------------------------------------------------------------------
 
-EXEC master.sp_addlinkedsrvlogin 
+EXEC sp_addlinkedsrvlogin 
 	@rmtsrvname='cof', 
 	@useself=N'False', 
 	@locallogin=NULL, 
@@ -33,18 +33,18 @@ if exists(select * from sys.synonyms where name like '%VehicularObjetivosCred%')
 if exists(select * from sys.synonyms where name like '%VehicularSolicitudPrecioSoat%') drop synonym VehicularSolicitudPrecioSoat;
 if exists(select * from sys.synonyms where name like '%InmobiliarioPersona%') drop synonym InmobiliarioPersona;
 
-create synonym dbo.CatalogoCodigos						for cof.[DBCore_VtaCartera].[dbo].CatalogoCodigos;						
-create synonym dbo.personatelefono						for cof.[DBCore_VtaCartera].[dbo].personatelefono;					
-create synonym dbo.PersonaNat							for cof.[DBCore_VtaCartera].[dbo].PersonaNat;								
-create synonym dbo.PersonaJur							for cof.[DBCore_VtaCartera].[dbo].PersonaJur;								
-create synonym dbo.persona								for cof.[DBCore_VtaCartera].[dbo].persona;									
-create synonym dbo.CredPersonas							for cof.[DBCore_VtaCartera].[dbo].CredPersonas;								
-create synonym dbo.credvehicular						for cof.[DBCore_VtaCartera].[dbo].credvehicular;							
-create synonym dbo.creditos								for cof.[DBCore_VtaCartera].[dbo].creditos;									
-create synonym dbo.CredCronograma						for cof.[DBCore_VtaCartera].[dbo].CredCronograma;							
-create synonym dbo.Vehicularsolicitud					for cof.[DBCore_VtaCartera].[dbo].Vehicularsolicitud;						
-create synonym dbo.VehicularSolicitudInformacionAuto	for cof.[DBCore_VtaCartera].[dbo].VehicularSolicitudInformacionAuto;		
-create synonym dbo.VehicularsolicitudProspectos			for cof.[DBCore_VtaCartera].[dbo].VehicularsolicitudProspectos;				
-create synonym dbo.VehicularObjetivosCred				for cof.[DBCore_VtaCartera].[dbo].VehicularObjetivosCred;					
-create synonym dbo.VehicularSolicitudPrecioSoat			for cof.[DBCore_VtaCartera].[dbo].VehicularSolicitudPrecioSoat;				
-create synonym dbo.InmobiliarioPersona					for cof.[DBCore_VtaCartera].[dbo].InmobiliarioPersona;		
+create synonym dbo.CatalogoCodigos						for cof.[DBCoreMigracion].[dbo].CatalogoCodigos;						
+create synonym dbo.personatelefono						for cof.[DBCoreMigracion].[dbo].personatelefono;					
+create synonym dbo.PersonaNat							for cof.[DBCoreMigracion].[dbo].PersonaNat;								
+create synonym dbo.PersonaJur							for cof.[DBCoreMigracion].[dbo].PersonaJur;								
+create synonym dbo.persona								for cof.[DBCoreMigracion].[dbo].persona;									
+create synonym dbo.CredPersonas							for cof.[DBCoreMigracion].[dbo].CredPersonas;								
+create synonym dbo.credvehicular						for cof.[DBCoreMigracion].[dbo].credvehicular;							
+create synonym dbo.creditos								for cof.[DBCoreMigracion].[dbo].creditos;									
+create synonym dbo.CredCronograma						for cof.[DBCoreMigracion].[dbo].CredCronograma;							
+create synonym dbo.Vehicularsolicitud					for cof.[DBCoreMigracion].[dbo].Vehicularsolicitud;						
+create synonym dbo.VehicularSolicitudInformacionAuto	for cof.[DBCoreMigracion].[dbo].VehicularSolicitudInformacionAuto;		
+create synonym dbo.VehicularsolicitudProspectos			for cof.[DBCoreMigracion].[dbo].VehicularsolicitudProspectos;				
+create synonym dbo.VehicularObjetivosCred				for cof.[DBCoreMigracion].[dbo].VehicularObjetivosCred;					
+create synonym dbo.VehicularSolicitudPrecioSoat			for cof.[DBCoreMigracion].[dbo].VehicularSolicitudPrecioSoat;				
+create synonym dbo.InmobiliarioPersona					for cof.[DBCoreMigracion].[dbo].InmobiliarioPersona;		

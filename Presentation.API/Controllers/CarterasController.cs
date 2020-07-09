@@ -43,7 +43,8 @@ namespace GestionCartera.API.Controllers
                     },
                     Creditos = new List<Credito>(),
                     ProductoID = carteraVO.ProductoID,
-                    Creado = carteraVO.Creado
+                    Creado = carteraVO.Creado,
+                    esrepro = carteraVO.esrepro
                 };
 
                 if (carteraVO.Creditos != "" && carteraVO.Creditos != null)

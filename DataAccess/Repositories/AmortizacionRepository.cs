@@ -93,7 +93,7 @@ namespace DAL.Repositories
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
 
-                param.Add("@ReprogramacionID", entity.AmortizacionID);
+                param.Add("@AmortizacionID", entity.AmortizacionID);
                 param.Add("@Tasa", entity.Tasa);
                 param.Add("@SaldoCapital", entity.SaldoCapital);
                 param.Add("@NuevoCapital", entity.NuevoCapital);

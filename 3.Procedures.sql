@@ -347,7 +347,8 @@ CREATE procedure [dbo].[CrearCartera] --'emartinez', 1,  '991,992,993'
 	@ProductoID int,
 	@CreadoPor varchar(200),
 	@creditos nvarchar(max),
-	@creado datetime
+	@creado datetime,
+	@esrepro bit
 as
 
 	/*
@@ -391,7 +392,8 @@ as
 				@creado,
 				null,
 				null,
-				@CreadoPor
+				@CreadoPor,
+				@esrepro
 			)
 
 			insert into CarteraCredito 
@@ -419,7 +421,8 @@ as
 			@creado,
 			null,
 			null,
-			@CreadoPor
+			@CreadoPor,
+			@esrepro
 		)
 
 		insert into CarteraCredito 
@@ -442,7 +445,8 @@ CREATE procedure [dbo].[EditarCartera]
 	@ProductoID int,
 	@FondeadorID int,
 	@creditos nvarchar(max),
-	@creado datetime
+	@creado datetime,
+	@esrepro bit
 as
 	delete from CarteraCredito where CarteraID = @CarteraID;
 
@@ -452,7 +456,8 @@ as
 		FondeadorID = @FondeadorID, 
 		ProductoID = @ProductoID, 
 		Modificado = getdate(), 
-		Creado = @creado
+		Creado = @creado,
+		esrepro = @esrepro
 	where 
 		CarteraID = @CarteraID 
 		and ProductoID = @ProductoID;
@@ -461,6 +466,7 @@ as
 	select @CarteraID, @ProductoID, f.tuple, 1 
 	from dbo.split_string(@creditos, ',') f
 GO
+
 if object_id('EliminarCartera') is not null  drop procedure dbo.EliminarCartera;
 go
 create procedure  [dbo].[EliminarCartera]
@@ -508,6 +514,7 @@ declare @table table(
 	ProductoID int,
 	FondeadorID int,
 	Nombre nvarchar(10),
+	esrepro bit,
 	Creado datetime,
 	Modificado Datetime,
 	FechaDesembolso datetime,
@@ -522,6 +529,7 @@ select
 	ca.ProductoID,
 	ca.FondeadorID,
 	f.Nombre,
+	ca.esrepro,
 	ca.Creado,
 	ca.Modificado,
 	ca.FechaDesembolso,
@@ -729,7 +737,7 @@ if @tipo = 'ruc'
 GO
 if object_id('GetCarteras') is not null  drop procedure dbo.GetCarteras;
 go
-CREATE procedure [dbo].[GetCarteras]
+CREATE procedure [dbo].[GetCarteras] -- [dbo].[GetCarteras] 2
 	@producto int
 as
 declare @precios table(
@@ -762,16 +770,35 @@ group by
 --CONDICIÓN FORJADA PARA QUE APAREZCA UN PRECIO ESPECÍFICO EN LA CARTERA 308
 UPDATE @PRECIOS SET PRECIO =  8185491.66 WHERE CARTERAID = 303;
 
+
+declare @cantidad table(
+	carteraid int,
+	n int
+)
+
+insert into @cantidad 
+select 
+	ca.carteraid,
+	count(cc.ncodcred)
+from
+	carteras ca
+	inner join carteracredito cc on cc.carteraid = ca.carteraid
+group by 
+	ca.carteraid
+
 select 
 	ca.*,
+	cant.n,
 	pr.precio,
 	f.*,
 	cod.*	
 from 
 	carteras ca 
 	inner join @precios pr on pr.CarteraID = ca.CarteraID
+	inner join @cantidad cant on cant.CarteraID = ca.CarteraID
 	inner join Fondeadores f on f.FondeadorID = ca.FondeadorID
 	inner join CatalogoCodigos cod on ca.ProductoID = cod.nValor and cod.ncodigo = 4029
+order by ca.carteraid asc
 GO
 
 /*
@@ -1181,19 +1208,19 @@ GO
 if object_id('GetAmortizacion') is not null  drop procedure dbo.GetAmortizacion;
 go
 CREATE procedure [dbo].[GetAmortizacion]
-	@ReprogramacionID int = 0
+	@AmortizacionID int = 0
 as
 begin
-	if(@ReprogramacionID = 0)
-		select * from dbo.Reprogramaciones
+	if(@AmortizacionID = 0)
+		select * from dbo.Amortizaciones
 	else
-		select * from dbo.Reprogramaciones where ReprogramacionID = @ReprogramacionID
+		select * from dbo.Amortizaciones where AmortizacionID = @AmortizacionID
 end
 GO
 if object_id('GuardarAmortizacion') is not null  drop procedure dbo.GuardarAmortizacion;
 go
 CREATE procedure [dbo].[GuardarAmortizacion]
-    @ReprogramacionID int,
+    @AmortizacionID int,
     @Tasa decimal(10,2),
     @SaldoCapital decimal(10,2),
     @NuevoCapital decimal(10,2),
@@ -1203,7 +1230,7 @@ CREATE procedure [dbo].[GuardarAmortizacion]
     @Factor decimal(10,2),
     @InteresesTranscurridos decimal(10,2),
     @KI decimal(10,2),
-    @Amortizacion decimal(10,2),
+    @nAmortizacion decimal(10,2),
     @Capital decimal(10,2),
     @nCodCred int,
     @Total decimal(10,2),
@@ -1211,11 +1238,11 @@ CREATE procedure [dbo].[GuardarAmortizacion]
 	@Confirmacion datetime
 as
 begin
-	if(@ReprogramacionID = 0)
-		insert into dbo.Reprogramaciones(Tasa, SaldoCapital, NuevoCapital, UltimoVencimiento, Hoy, DiasTranscurridos, Factor, InteresesTranscurridos, KI, Amortizacion, Capital, nCodCred, Total, NroCalendarioCOF)
-		values(@Tasa, @SaldoCapital, @NuevoCapital, @UltimoVencimiento, @Hoy, @DiasTranscurridos, @Factor, @InteresesTranscurridos, @KI, @Amortizacion, @Capital, @nCodCred, @Total, @NroCalendarioCOF);
+	if(@AmortizacionID = 0)
+		insert into dbo.Amortizaciones(Tasa, SaldoCapital, NuevoCapital, UltimoVencimiento, Hoy, DiasTranscurridos, Factor, InteresesTranscurridos, KI, nAmortizacion, Capital, nCodCred, Total, NroCalendarioCOF)
+		values(@Tasa, @SaldoCapital, @NuevoCapital, @UltimoVencimiento, @Hoy, @DiasTranscurridos, @Factor, @InteresesTranscurridos, @KI, @nAmortizacion, @Capital, @nCodCred, @Total, @NroCalendarioCOF);
 	else
-		update dbo.Reprogramaciones 
+		update dbo.Amortizaciones 
 		set 
 			Tasa=@Tasa, 
 			SaldoCapital=@SaldoCapital, 
@@ -1226,14 +1253,14 @@ begin
 			Factor=@Factor, 
 			InteresesTranscurridos=@InteresesTranscurridos, 
 			KI=@KI, 
-			Amortizacion=@Amortizacion, 
+			nAmortizacion=@nAmortizacion, 
 			Capital=@Capital, 
 			Total=@Total, 
 			nCodCred = @nCodCred,
 			NroCalendarioCOF=@NroCalendarioCOF, 
 			Confirmacion=@Confirmacion	
 		where 
-			ReprogramacionID = @ReprogramacionID
+			AmortizacionID = @AmortizacionID
 end
 GO
 

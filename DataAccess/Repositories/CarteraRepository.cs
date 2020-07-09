@@ -120,7 +120,7 @@ namespace DAL.Repositories
 
                 if (entity.CarteraID == 0)
                 {
-                    string query = "exec [CrearCartera] @FondeadorID, @ProductoID, @CreadoPor, @creditos, @creado";
+                    string query = "exec [CrearCartera] @FondeadorID, @ProductoID, @CreadoPor, @creditos, @creado, @esrepro";
 
                     Dictionary<string, object> param = new Dictionary<string, object>();
                     param.Add("@FondeadorID", Fondeador);
@@ -128,6 +128,7 @@ namespace DAL.Repositories
                     param.Add("@CreadoPor", CreadoPor);
                     param.Add("@creditos", creditos);
                     param.Add("@creado", entity.Creado);
+                    param.Add("@esrepro", entity.esrepro);
 
                     var res = await Query<int>(query, param);
 
@@ -135,7 +136,7 @@ namespace DAL.Repositories
                 }
                 else
                 {
-                    string query = @"exec EditarCartera @CarteraID, @ProductoID, @FondeadorID, @creditos, @creado";
+                    string query = @"exec EditarCartera @CarteraID, @ProductoID, @FondeadorID, @creditos, @creado, @esrepro";
 
                     Dictionary<string, object> param = new Dictionary<string, object>();
                     param.Add("@CarteraID", entity.CarteraID);
@@ -143,6 +144,7 @@ namespace DAL.Repositories
                     param.Add("@FondeadorID", entity.Fondeador.FondeadorID);
                     param.Add("@creditos", creditos);
                     param.Add("@creado", entity.Creado);
+                    param.Add("@esrepro", entity.esrepro);
 
                     var res = await Execute(query, param);
 
