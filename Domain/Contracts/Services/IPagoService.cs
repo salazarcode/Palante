@@ -13,6 +13,6 @@ namespace Domain.Contracts.Services
         Task<int> Delete(Pago pago);
         Task<List<Pago>> All(Pago pago);
         Task<List<PagoDetalle>> FindDeuda(int nCodCred);
-
+        Task<int> Confirmar(int PagoID);
     }
 }

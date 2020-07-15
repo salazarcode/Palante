@@ -22,7 +22,7 @@ namespace DAL.Repositories
         {
             try
             {
-                string query = @"dbo.GetCronogramas 1,@codigo";
+                string query = @"dbo.GetCronogramas 1,@codigo, @ultimo";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
                 param.Add("@codigo", codigo);

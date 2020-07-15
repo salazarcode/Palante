@@ -13,5 +13,7 @@ namespace Domain.Contracts.Services
         Task<List<Credito>> Cumplimiento(int FondeadorID, string creditos);
         Task<List<Credito>> Search(CreditoSearch search);
         Task<List<CreditoVO>> PorEstado(string EstadosConcatenadosComa);
+        Task<List<Credito>> PendientesPorAprobacion(int FondeadorID, DateTime desde, DateTime hasta);
+        Task<List<Credito>> DisponiblesPorFondeador(int FondeadorID, DateTime desde, DateTime hasta);
     }
 }

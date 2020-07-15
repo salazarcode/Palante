@@ -164,7 +164,6 @@ namespace DAL.Repositories
 
                 var creditosStr = String.Join(",", res.First().Creditos.Select(x => x.nCodCred));
                 var creditosCompletos = await _creditosRepository.Search(new CreditoSearch() { 
-                    Tipo = "credito",
                     Query = creditosStr,
                     Fecha = DateTime.Now
                 });

@@ -53,12 +53,12 @@ namespace DAL.Repositories
         {
             try
                 {
-                string q = "exec dbo.FindCredito @tipo, @q, @fecha";
+                string q = "exec dbo.FindCredito @q, @fecha, @EnFondeador";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@tipo", search.Tipo);
                 param.Add("@q", search.Query);
                 param.Add("@fecha", search.Fecha);
+                param.Add("@EnFondeador", search.EnFondeador);
 
                 using var conn = new SqlConnection(_connectionString);
                 var list = await conn.QueryAsync<Credito, Producto, Credito>(
@@ -72,6 +72,7 @@ namespace DAL.Repositories
                     splitOn: "nCodigo");
                 var res = list.Distinct().ToList();
 
+                //Si el producto es un derivado de motors se le pone la clasificacion base de YAPAMOTORS
                 res.ForEach(ele => {
                     var n = ele.Producto.nValor;
                     if (n == 9 || n == 8 || n == 7 || n == 6 || n == 2)
@@ -113,6 +114,48 @@ namespace DAL.Repositories
                 var res = list.Distinct().ToList();
 
                 return list.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Credito>> PendientesPorAprobacion(int FondeadorID, DateTime desde, DateTime hasta)
+        {
+            try
+            {
+                string query = "exec dbo.PendientesPorAprobacion @FondeadorID, @desde, @hasta";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@FondeadorID", FondeadorID);
+                param.Add("@desde", desde);
+                param.Add("@hasta", hasta);
+
+                var res = await Query<Credito>(query, param);
+
+                return res.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Credito>> DisponiblesPorFondeador(int FondeadorID, DateTime desde, DateTime hasta)
+        {
+            try
+            {
+                string query = "exec dbo.DisponiblesPorFondeador @FondeadorID, @desde, @hasta";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@FondeadorID", FondeadorID);
+                param.Add("@desde", desde);
+                param.Add("@hasta", hasta);
+
+                var res = await Query<Credito>(query, param);
+
+                return res.ToList();
             }
             catch (Exception ex)
             {

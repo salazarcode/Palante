@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Domain.Contracts.Repositories;
 using Domain.Contracts.Services;
 using Domain.Services;
+using AutoMapper;
 
 namespace GestionCartera.API
 {
@@ -42,6 +43,7 @@ namespace GestionCartera.API
             services.AddSingleton<IPagoRepository,      PagoRepository>();
             services.AddSingleton<ICronogramaRepository, CronogramaRepository>();
             services.AddSingleton<IAmortizacionRepository, AmotizacionRepository>();
+            services.AddSingleton<ICuotaRepository, CuotaRepository>();
 
             services.AddSingleton<IClienteService, ClienteService>();
             services.AddSingleton<ICreditoService, CreditoService>();
@@ -54,6 +56,7 @@ namespace GestionCartera.API
             services.AddSingleton<IPagoService,  PagoService>();
             services.AddSingleton<ICronogramaService, CronogramaService>();
             services.AddSingleton<IAmortizacionService, AmortizacionService>();
+            services.AddSingleton<ICuotaService, CuotaService>();
 
             services.AddCors(options => {
                 options.AddPolicy("default", builder => {
@@ -62,6 +65,8 @@ namespace GestionCartera.API
                     builder.AllowAnyHeader();
                 });
             });
+
+            services.AddAutoMapper(typeof(AutoMapping));
 
             OpenApiInfo info = new OpenApiInfo { 
                 Title = "Gestión de Cartera. API", 

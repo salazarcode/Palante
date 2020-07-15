@@ -53,7 +53,6 @@ namespace GestionCartera.API.Controllers
             try
             {
                 CreditoSearch parametros = new CreditoSearch();
-                parametros.Tipo = "credito";
                 parametros.Query = creditos;
                 parametros.Fecha = fecha;
 

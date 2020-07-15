@@ -17,11 +17,11 @@ namespace Domain.Services
             _cuotaRepo = cuotaRepo;
         }
 
-        async Task<IEnumerable<Cuota>> ICuotaService.All()
+        public async Task<List<Credito>> PorEstadosConContraparte(string nEstadoCuota, string nEstado)
         {
             try
             {
-                var res = await _cuotaRepo.All();
+                var res = await _cuotaRepo.PorEstadosConContraparte(nEstadoCuota, nEstado);
                 return res;
             }
             catch (Exception e)

@@ -8,5 +8,6 @@ namespace Domain.Contracts.Repositories
 {
     public interface IAmortizacionRepository : IRepository<Amortizacion>
     {
+        Task<int> Cerrar(int AmortizacionID);
     }
 }

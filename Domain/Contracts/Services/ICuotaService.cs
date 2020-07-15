@@ -8,6 +8,6 @@ namespace Domain.Contracts.Services
 {
     public interface ICuotaService
     {
-        Task<IEnumerable<Cuota>> All();
+        Task<List<Credito>> PorEstadosConContraparte(string nEstadoCuota, string nEstado);
     }
 }

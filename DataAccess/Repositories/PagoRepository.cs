@@ -18,6 +18,24 @@ namespace DAL.Repositories
         {
         }
 
+        public async Task<int> Confirmar(int PagoID)
+        {
+            try
+            {
+                string query = "exec CerrarPago @pagoID";
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@pagoID", PagoID);
+
+                var res = await Execute(query, param);
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<List<PagoDetalle>> FindDeuda(int nCodCred)
         {
             try

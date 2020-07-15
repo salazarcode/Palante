@@ -17,42 +17,65 @@ namespace DAL.Repositories
         public CuotaRepository(IConfiguration configuration) : base(configuration)
         {
         }
-
-        public Task<List<Cuota>> Find(Cuota c)
+        public Task<List<Cuota>> All(Paginacion paginacion = null)
         {
             throw new NotImplementedException();
         }
 
-        async Task<List<Cuota>> IRepository<Cuota>.All(Paginacion pag = null)
+        public Task<int> Delete(Cuota entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Cuota>> Find(Cuota param)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Credito>> PorEstadosConContraparte(string nEstadoCuota, string nEstado)
         {
             try
             {
-                string query = @"
-                    select 
-                    *
-                    from credcronograma cro
-                    inner join (
-	                    select p.nCodCred, max(p.nNroCalendario) maximo from credcronograma p group by p.nCodCred
-                    ) a on a.nCodCred = cro.nCodCred and a.maximo = cro.nNroCalendario
-                    ";
+                string q = "exec dbo.GetCuotasPorEstado @nEstadoCuota, @nEstado";
 
-                var res = await Query<Cuota>(query, null);
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@nEstadoCuota", nEstadoCuota);
+                param.Add("@nEstado", nEstado);
+
+
+                var dict = new Dictionary<int, Credito>();
+
+                using var conn = new SqlConnection(_connectionString);
+                var list = await conn.QueryAsync<Credito, Producto, Cuota, Credito>(
+                    q,
+                    (credito, producto, cuota) =>
+                    {
+                        Credito credFinal;                        
+                        
+                        if (!dict.TryGetValue(credito.nCodCred, out credFinal))
+                        {
+                            credFinal = credito;
+                            credito.Producto = producto;
+                            credito.CuotasVencidasVigentes = new List<Cuota>();
+                            dict.Add(credito.nCodCred, credFinal);
+                        }
+
+                        credFinal.CuotasVencidasVigentes.Add(cuota);
+                        return credFinal;
+                    },
+                    param,
+                    splitOn: "nCodigo,codigo");
+                var res = list.Distinct().ToList();
 
                 return res;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw e;
+                throw ex;
             }
         }
 
-        Task<int> IRepository<Cuota>.Delete(Cuota cuota)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        Task<int> IRepository<Cuota>.Save(Cuota entity)
+        public Task<int> Save(Cuota entity)
         {
             throw new NotImplementedException();
         }

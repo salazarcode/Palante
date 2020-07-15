@@ -109,6 +109,27 @@ namespace GestionCartera.API.Controllers
             }
         }
 
+
+
+        /// <summary>
+        /// Confirmar Pagos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Confirmar")]
+        public async Task<int> Confirmar(int PagoID)
+        {
+            try
+            {
+                var res = await _PagoService.Confirmar(PagoID);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         /// <summary>
         /// Listar todos las Pagos
         /// </summary>

@@ -31,9 +31,9 @@ namespace GestionCartera.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("CronogramasPalante")]
-        public async Task<IEnumerable<Cronograma>> CronogramasPalante(string codigo)
+        public async Task<IEnumerable<Cronograma>> CronogramasPalante(string codigo, bool ConUltimoCalendario = false)
         {
-            var res = await _CronogramaService.GetCronogramasPalante(codigo, false);
+            var res = await _CronogramaService.GetCronogramasPalante(codigo, ConUltimoCalendario);
             return res;
         }
 
@@ -51,14 +51,14 @@ namespace GestionCartera.API.Controllers
 
                 List<CuotaVO> lista = cronogramas[0].Cuotas.Select(x=> {
                     CuotaVO res = new CuotaVO();
-                    res.CodigoCredito = x.CodigoCredito;
-                    res.NumeroCuota = x.NumeroCuota;
-                    res.FechaPago = x.FechaPago;
-                    res.Amortizacion = x.Amortizacion;
-                    res.Interes = x.Interes;
-                    res.PeriodoGracia = x.PeriodoGracia;
-                    res.Encaje = x.Encaje;
-                    res.TotalCuota = x.TotalCuota;
+                    res.CodigoCredito = x.nCodCred.ToString();
+                    res.NumeroCuota = x.nNroCuota.ToString();
+                    res.FechaPago = x.dFecVcto.ToString();
+                    res.Amortizacion = x.nCapital.ToString();
+                    res.Interes = x.nIntereses.ToString();
+                    res.PeriodoGracia = x.nPerGracia.ToString();
+                    res.Encaje = "0.00";
+                    res.TotalCuota = x.nCuotaMensual.ToString();
                     return res;
                 }).ToList();
 

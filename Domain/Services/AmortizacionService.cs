@@ -30,6 +30,19 @@ namespace Domain.Services
             }
         }
 
+        public async Task<int> Cerrar(int AmortizacionID)
+        {
+            try
+            {
+                var res = await _AmortizacionRepo.Cerrar(AmortizacionID);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public async Task<int> Delete(int AmortizacionID)
         {
             try

@@ -12,5 +12,6 @@ namespace Domain.Contracts.Services
         Task<int> Save(Amortizacion Amortizacion);
         Task<int> Delete(int AmortizacionID);
         Task<Amortizacion> Find(int AmortizacionID);
+        Task<int> Cerrar(int AmortizacionID);
     }
 }

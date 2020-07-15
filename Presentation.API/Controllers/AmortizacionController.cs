@@ -96,5 +96,24 @@ namespace GestionCartera.API.Controllers
                 throw e;
             }
         }
+
+        /// <summary>
+        /// Cerrar una Amortizacion
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Cerrar")]
+        public async Task<int> Cerrar(int AmortizacionID)
+        {
+            try
+            {
+                var res = await _AmortizacionService.Cerrar(AmortizacionID);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

@@ -11,6 +11,8 @@ using Domain.Entities;
 using Domain.Contracts.Services;
 using Domain.ValueObjects;
 using Transversal.Util;
+using AutoMapper;
+using GestionCartera.API.ValueObjects;
 
 namespace GestionCartera.API.Controllers
 {
@@ -18,11 +20,14 @@ namespace GestionCartera.API.Controllers
     [Route("[controller]")]
     public class CreditosController : ControllerBase
     {
+
+        private readonly IMapper _mapper;
         private readonly ICreditoService _CreditoService;
 
-        public CreditosController(ICreditoService CreditoService)
+        public CreditosController(ICreditoService CreditoService, IMapper mapper)
         {
             _CreditoService = CreditoService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -33,8 +38,75 @@ namespace GestionCartera.API.Controllers
         [Route("All")]
         public async Task<IEnumerable<Credito>> All([FromForm] Paginacion paginacion)
         {
-            var res = await _CreditoService.All(paginacion);
-            return res;
+            try
+            {
+                var res = await _CreditoService.All(paginacion);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Listar todos los Creditos
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("PendientesPorAprobacion")]
+        public async Task<FileContentResult> PendientesPorAprobacion([FromForm] int FondeadorID, [FromForm] DateTime desde, [FromForm] DateTime hasta)
+        {
+            try
+            {
+                var res = await _CreditoService.PendientesPorAprobacion(FondeadorID, desde, hasta);
+
+                if (res.Count() == 0)
+                    throw new Exception();
+
+                List<CreditoDTO> creditosMapeados = _mapper.Map<List<Credito>, List<CreditoDTO>>(res);
+
+                var array = FileGenerator.ExcelToByteArray<CreditoDTO>(creditosMapeados, "PendientesPorAprobacion");
+
+                var nombre = "PendientesPorAprobacion.xlsx";
+
+                return File(array, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombre);
+            }
+            catch (Exception ex)
+            {
+                ex.Data.Add("res", false);
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// DisponiblesPorFondeador
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("DisponiblesPorFondeador")]
+        public async Task<FileContentResult> DisponiblesPorFondeador([FromForm] int FondeadorID, [FromForm] DateTime desde, [FromForm] DateTime hasta)
+        {
+            try
+            {
+                var res = await _CreditoService.DisponiblesPorFondeador(FondeadorID, desde, hasta);
+
+                if (res.Count() == 0)
+                    throw new Exception();
+
+
+                List<CreditoDTO> creditosMapeados = _mapper.Map<List<Credito>, List<CreditoDTO>>(res);
+
+                var array = FileGenerator.ExcelToByteArray<CreditoDTO>(creditosMapeados, "DisponiblesPorFondeador");
+
+                var nombre = "DisponiblesPorFondeador.xlsx";
+
+                return File(array, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombre);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -45,8 +117,16 @@ namespace GestionCartera.API.Controllers
         [Route("Cumplimiento")]
         public async Task<IEnumerable<Credito>> Cumplimiento([FromForm] int FondeadorID, [FromForm] string creditos)
         {
-            var res = await _CreditoService.Cumplimiento(FondeadorID, creditos);
-            return res;
+            try
+            {
+                var res = await _CreditoService.Cumplimiento(FondeadorID, creditos);
+                return res;
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
         }
 
         /// <summary>
@@ -57,8 +137,15 @@ namespace GestionCartera.API.Controllers
         [Route("Search")]
         public async Task<IEnumerable<Credito>> Search([FromForm] CreditoSearch param)
         {
-            var res = await _CreditoService.Search(param);
-            return res;
+            try
+            {
+                var res = await _CreditoService.Search(param);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>

@@ -9,6 +9,7 @@ namespace Domain.Contracts.Repositories
     public interface IPagoRepository : IRepository<Pago>
     {
         Task<int> Crear(Pago pago);
+        Task<int> Confirmar(int PagoID);
         Task<List<PagoDetalle>> FindDeuda(int nCodCred);
     }
 }

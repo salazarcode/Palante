@@ -62,5 +62,31 @@ namespace Domain.Services
                 throw e;
             }
         }
+
+        public async Task<List<Credito>> PendientesPorAprobacion(int FondeadorID, DateTime desde, DateTime hasta)
+        {
+            try
+            {
+                var res = await _CreditoRepo.PendientesPorAprobacion(FondeadorID, desde, hasta);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task<List<Credito>> DisponiblesPorFondeador(int FondeadorID, DateTime desde, DateTime hasta)
+        {
+            try
+            {
+                var res = await _CreditoRepo.DisponiblesPorFondeador(FondeadorID, desde, hasta);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

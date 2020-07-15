@@ -35,6 +35,23 @@ namespace DAL.Repositories
             }
         }
 
+        public async Task<int> Cerrar(int AmortizacionID)
+        {
+            try
+            {
+                string query = @"dbo.CerrarAmortizacion @AmortizacionID";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@AmortizacionID", AmortizacionID);
+
+                return await Execute(query, param);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<int> Delete(Amortizacion entity)
         {
             try

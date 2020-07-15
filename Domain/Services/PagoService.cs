@@ -81,5 +81,18 @@ namespace Domain.Services
                 throw ex;
             }
         }
+
+        public async Task<int> Confirmar(int PagoID)
+        {
+            try
+            {
+                var res = await _pagoRepo.Confirmar(PagoID);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }
