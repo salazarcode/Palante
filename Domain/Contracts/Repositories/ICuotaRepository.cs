@@ -9,5 +9,6 @@ namespace Domain.Contracts.Repositories
     public interface ICuotaRepository : IRepository<Cuota>
     {
         Task<List<Cuota>> GetCuotas(DateTime pagosDesde, DateTime pagosHasta, string nEstadoCuota);
+        Task<List<Cuota>> GetCuotasPorVencer(DateTime pagosDesde, DateTime pagosHasta, string codigoFondeador);
     }
 }

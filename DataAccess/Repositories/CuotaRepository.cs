@@ -61,6 +61,35 @@ namespace DAL.Repositories
             }
         }
 
+        public async Task<List<Cuota>> GetCuotasPorVencer(DateTime pagosDesde, DateTime pagosHasta, string codigoFondeador)
+        {
+            try
+            {
+                string q = "exec dbo.GetCuotasPorVencer @pagosDesde, @pagosHasta, @codigoFondeador";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@pagosDesde", pagosDesde);
+                param.Add("@pagosHasta", pagosHasta);
+                param.Add("@codigoFondeador", codigoFondeador);
+
+                var list = await Query<Cuota>(q, param);
+
+                list.ForEach(ele => {
+                    var n = ele.producto;
+                    if (n == 9 || n == 8 || n == 7 || n == 6 || n == 2)
+                    {
+                        ele.producto = 2;
+                    }
+                });
+
+                return list;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public Task<int> Save(Cuota entity)
         {
             throw new NotImplementedException();

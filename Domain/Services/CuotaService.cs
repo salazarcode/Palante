@@ -29,5 +29,18 @@ namespace Domain.Services
                 throw e;
             }
         }
+
+        public async Task<List<Cuota>> GetCuotasPorVencer(DateTime pagosDesde, DateTime pagosHasta, string codigoFondeador)
+        {
+            try
+            {
+                var res = await _cuotaRepo.GetCuotasPorVencer(pagosDesde, pagosHasta, codigoFondeador);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

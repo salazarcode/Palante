@@ -48,5 +48,27 @@ namespace GestionCartera.API.Controllers
                 throw ex;
             }
         }
+
+
+
+        /// <summary>
+        /// Lista de cutas PorEstado
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("GetCuotasPorVencer")]
+        public async Task<List<Cuota>> GetCuotasPorVencer([FromForm] DateTime pagosDesde, [FromForm] DateTime pagosHasta, [FromForm] string codigoFondeador)
+        {
+            try
+            {
+                var res = await _CuotaService.GetCuotasPorVencer(pagosDesde, pagosHasta, codigoFondeador);
+                return res;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }
