@@ -17,11 +17,11 @@ namespace Domain.Services
             _cuotaRepo = cuotaRepo;
         }
 
-        public async Task<List<Credito>> PorEstadosConContraparte(string nEstadoCuota, string nEstado)
+        public async Task<List<Cuota>> GetCuotas(DateTime pagosDesde, DateTime pagosHasta, string nEstadoCuota)
         {
             try
             {
-                var res = await _cuotaRepo.PorEstadosConContraparte(nEstadoCuota, nEstado);
+                var res = await _cuotaRepo.GetCuotas(pagosDesde, pagosHasta, nEstadoCuota);
                 return res;
             }
             catch (Exception e)

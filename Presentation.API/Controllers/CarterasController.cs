@@ -44,6 +44,7 @@ namespace GestionCartera.API.Controllers
                     Creditos = new List<Credito>(),
                     ProductoID = carteraVO.ProductoID,
                     Creado = carteraVO.Creado,
+                    CreadoPor = carteraVO.CreadoPor,
                     esrepro = carteraVO.esrepro
                 };
 

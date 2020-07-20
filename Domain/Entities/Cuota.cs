@@ -33,7 +33,6 @@ namespace Domain.Entities
         public string codigoFondeador { get; set; }
         public string codigopalante { get; set; }
         public int nSubProd { get; set; }
-        public decimal Disponible { get; set; }
 
         public string CodigoCredito { get; set; }
         public string NumeroCuota { get; set; }
@@ -44,7 +43,12 @@ namespace Domain.Entities
         public string Encaje { get; set; }
         public string TotalCuota { get; set; }
 
-        public decimal Pagado { get; set; }
-        public Credito Credito{ get; set; }
+        public decimal disponible { get; set; }
+        public decimal pagado { get; set; }
+
+        public string id { get; set; }
+        public string nombre { get; set; }
+        public int producto { get; set; }
+        public int fondeador { get; set; }
     }
 }

@@ -20,14 +20,11 @@ namespace GestionCartera.API.Controllers
     [Route("[controller]")]
     public class CuotasController : ControllerBase
     {
-
-        private readonly IMapper _mapper;
         private readonly ICuotaService _CuotaService;
 
-        public CuotasController(ICuotaService CuotaService, IMapper mapper)
+        public CuotasController(ICuotaService CuotaService)
         {
             _CuotaService = CuotaService;
-            _mapper = mapper;
         }
 
 
@@ -37,12 +34,12 @@ namespace GestionCartera.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Route("PorEstados")]
-        public async Task<List<Credito>> PorEstadosConContraparte([FromForm] string nEstadoCuota, [FromForm] string nEstado)
+        [Route("GetCuotas")]
+        public async Task<List<Cuota>> GetCuotas([FromForm] DateTime pagosDesde, [FromForm] DateTime pagosHasta, [FromForm] string nEstadoCuota)
         {
             try
             {
-                var res = await _CuotaService.PorEstadosConContraparte(nEstadoCuota, nEstado);
+                var res = await _CuotaService.GetCuotas(pagosDesde, pagosHasta, nEstadoCuota);
                 return res;
             }
             catch (Exception ex)

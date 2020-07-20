@@ -14,6 +14,7 @@ namespace Domain.ValueObjects
         public string PeriodoTasa { get; set; }
         public string Interes { get; set; }
         public string InteresMoratorio { get; set; }
+        public string Destino { get; set; }
         public string CodigoCredito2 { get; set; }
     }
 }

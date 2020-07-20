@@ -42,15 +42,13 @@ namespace GestionCartera.API.Controllers
                 {
                     var res = x.Split(",");
                     PagoDetalle det = new PagoDetalle();
-                    det.nCodCred = Convert.ToInt32(res[0]);
+                    det.codigoFondeador = res[0];
 
-                    det.nNroCalendario = Convert.ToInt32(res[1]);
+                    det.nNroCuota = Convert.ToInt32(res[1]);
 
-                    det.nNroCuota = Convert.ToInt32(res[2]);
+                    det.Monto = Convert.ToDecimal(res[2]);
 
-                    det.Monto = Convert.ToDecimal(res[3]);
-
-                    det.EsDeuda = Convert.ToBoolean(res[4]);
+                    det.EsDeuda = Convert.ToBoolean(res[3]);
 
                     return det;
                 }).ToList();

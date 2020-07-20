@@ -28,6 +28,7 @@ namespace Domain.Entities
         public string ccodcta { get; set; }
         public int EsRepro { get; set; }
         public int codigoProducto { get; set; }
+        public string codigoFondeador { get; set; }
         public string nombreProducto { get; set; }
         public int pages { get; set; }
         public decimal nTasaComp { get; set; }

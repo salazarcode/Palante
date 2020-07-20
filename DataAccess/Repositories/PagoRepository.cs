@@ -71,7 +71,7 @@ namespace DAL.Repositories
                     {
                         Pago pagoEntry;
 
-                        if (!dict.TryGetValue(detalle.PagoID, out pagoEntry))
+                        if (!dict.TryGetValue(pago.PagoID, out pagoEntry))
                         {
                             pagoEntry = pago;
                             pagoEntry.Fondeador = fondeador;
@@ -86,7 +86,7 @@ namespace DAL.Repositories
                         return pagoEntry;
                     },
                     param,
-                    splitOn: "PagoID,FondeadorID,nCodigo,PagoConceptoID");
+                    splitOn: "codigoFondeador,FondeadorID,nCodigo,PagoConceptoID");
 
                 return list.Distinct().ToList();
             }
@@ -168,8 +168,7 @@ namespace DAL.Repositories
                 List<string> ensamblado = pago.Detalles.Select(x =>
                 {
                     List<string> campos = new List<string>();
-                    campos.Add(x.nCodCred.ToString());
-                    campos.Add(x.nNroCalendario.ToString());
+                    campos.Add(x.codigoFondeador.ToString());
                     campos.Add(x.nNroCuota.ToString());
                     campos.Add(x.Monto.ToString());
                     campos.Add(x.EsDeuda.ToString());
@@ -182,7 +181,6 @@ namespace DAL.Repositories
                 string query = "dbo.CrearPago @f, @p, @creador, @pagos";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@pagoID", pago.PagoID);
                 param.Add("@f", pago.Fondeador.FondeadorID);
                 param.Add("@p", pago.Producto.nValor);
                 param.Add("@creador", pago.CreadoPor);

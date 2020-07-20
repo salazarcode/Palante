@@ -32,42 +32,28 @@ namespace DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<List<Credito>> PorEstadosConContraparte(string nEstadoCuota, string nEstado)
+        public async Task<List<Cuota>> GetCuotas(DateTime pagosDesde, DateTime pagosHasta, string nEstadoCuota)
         {
             try
             {
-                string q = "exec dbo.GetCuotasPorEstado @nEstadoCuota, @nEstado";
+                string q = "exec dbo.GetCuotas @pagosDesde, @pagosHasta, @nEstadoCuota";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@pagosDesde", pagosDesde);
+                param.Add("@pagosHasta", pagosHasta);
                 param.Add("@nEstadoCuota", nEstadoCuota);
-                param.Add("@nEstado", nEstado);
 
+                var list = await Query<Cuota>(q, param);
 
-                var dict = new Dictionary<int, Credito>();
-
-                using var conn = new SqlConnection(_connectionString);
-                var list = await conn.QueryAsync<Credito, Producto, Cuota, Credito>(
-                    q,
-                    (credito, producto, cuota) =>
+                list.ForEach(ele => {
+                    var n = ele.producto;
+                    if (n == 9 || n == 8 || n == 7 || n == 6 || n == 2)
                     {
-                        Credito credFinal;                        
-                        
-                        if (!dict.TryGetValue(credito.nCodCred, out credFinal))
-                        {
-                            credFinal = credito;
-                            credito.Producto = producto;
-                            credito.CuotasVencidasVigentes = new List<Cuota>();
-                            dict.Add(credito.nCodCred, credFinal);
-                        }
+                        ele.producto = 2;
+                    }
+                });
 
-                        credFinal.CuotasVencidasVigentes.Add(cuota);
-                        return credFinal;
-                    },
-                    param,
-                    splitOn: "nCodigo,codigo");
-                var res = list.Distinct().ToList();
-
-                return res;
+                return list;
             }
             catch (Exception ex)
             {
