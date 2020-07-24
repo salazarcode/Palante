@@ -37,6 +37,7 @@ namespace GestionCartera.API.Controllers
             {
                 Recompra res = new Recompra
                 {
+                    CreadoPor = intake.CreadoPor,
                     RecompraID = intake.RecompraID,
                     Fondeador = new Fondeador
                     {
@@ -46,13 +47,9 @@ namespace GestionCartera.API.Controllers
                     {
                         nValor = intake.ProductoID
                     },
-                    Creditos = new List<Credito>()
+                    CreditosJoined = intake.Creditos,
+                    FechaCalculo = intake.FechaCalculo
                 };
-
-                if (intake.Creditos != "")
-                    intake.Creditos.Split(",").ToList().ForEach(x => res.Creditos.Add(new Credito { 
-                        nCodCred = Convert.ToInt32(x)
-                    }));
 
                 int id = await _RecompraService.Save(res);
 

@@ -30,6 +30,19 @@ namespace Domain.Services
             }
         }
 
+        public async Task<List<Cuota>> GetCuotasFondeador(string buscar)
+        {
+            try
+            {
+                var res = await _cuotaRepo.GetCuotasFondeador(buscar);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public async Task<List<Cuota>> GetCuotasPorVencer(DateTime pagosDesde, DateTime pagosHasta, string codigoFondeador)
         {
             try

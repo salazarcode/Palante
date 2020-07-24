@@ -46,12 +46,9 @@ namespace DAL.Repositories
             try
             {
                 string query = @"
-                    select 
-	                    r.*, c.*
-                    from 
-                        Recompras r 
-                        inner join creditorecompra cr on cr.recompraid = r.recompraid
-                        inner join creditos c on c.ncodcred = cr.ncodcred
+                    select r.*,cr.codigoFondeador, cr.monto precioRecompra 
+                    from dbo.recompras r
+                    inner join dbo.CreditoRecompra cr on cr.RecompraID = r.RecompraID
                     ";
 
                 var orderDictionary = new Dictionary<int, Recompra>();
@@ -74,7 +71,7 @@ namespace DAL.Repositories
                         RecompraEntry.Creditos.Add(credito);
                         return RecompraEntry;
                     },
-                    splitOn: "nCodCred");
+                    splitOn: "codigoFondeador");
 
                 return list.Distinct().ToList();
             }
@@ -202,17 +199,16 @@ namespace DAL.Repositories
         {
             try
             {
-                var creditos = String.Join(',', entity.Creditos.Select(x => x.nCodCred.ToString()));
-
                 if (entity.RecompraID == 0)
                 {
-                    string query = "exec [CrearRecompra] @CreadoPor, @FondeadorID, @ProductoID, @creditos";
+                    string query = "exec [CrearRecompra] @CreadoPor, @FechaCalculo, @FondeadorID, @ProductoID, @creditos";
 
                     Dictionary<string, object> param = new Dictionary<string, object>();
                     param.Add("@CreadoPor", entity.CreadoPor);
+                    param.Add("@FechaCalculo", entity.FechaCalculo);
                     param.Add("@FondeadorID", entity.Fondeador.FondeadorID);
                     param.Add("@ProductoID", entity.Producto.nValor);
-                    param.Add("@creditos", creditos);
+                    param.Add("@creditos", entity.CreditosJoined);
 
                     var res = await Execute(query, param);
 
@@ -227,7 +223,7 @@ namespace DAL.Repositories
                     param.Add("@CreadoPor", entity.CreadoPor);
                     param.Add("@FondeadorID", entity.Fondeador.FondeadorID);
                     param.Add("@ProductoID", entity.Producto.nValor);
-                    param.Add("@creditos", creditos);
+                    param.Add("@creditos", entity.CreditosJoined);
 
                     var res = await Execute(query, param);
 

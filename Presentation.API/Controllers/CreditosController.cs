@@ -54,6 +54,25 @@ namespace GestionCartera.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [Route("CreditosFondeador")]
+        public async Task<IEnumerable<Credito>> CreditosFondeador([FromForm] DateTime desde, [FromForm] DateTime hasta)
+        {
+            try
+            {
+                var res = await _CreditoService.CreditosFondeador(desde, hasta);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Listar todos los Creditos
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
         [Route("PendientesPorAprobacion")]
         public async Task<FileContentResult> PendientesPorAprobacion([FromForm] int FondeadorID, [FromForm] DateTime desde, [FromForm] DateTime hasta)
         {

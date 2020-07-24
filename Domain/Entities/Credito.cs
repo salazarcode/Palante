@@ -12,6 +12,7 @@ namespace Domain.Entities
         public double nPrestamo { get; set; }
         public DateTime dFechaVig { get; set; }
         public DateTime dFecIni { get; set; }
+        public DateTime fechaUltimoPago { get; set; }
         public int nEstado { get; set; }
         public int nNroCuotas { get; set; }
         public double nMontoCuota { get; set; }
@@ -39,5 +40,13 @@ namespace Domain.Entities
         public List<PagoDetalle> Pagos { get; set; }
         public List<PagoDetalle> Deudas { get; set; }
         public List<Cuota> CuotasVencidasVigentes { get; set; }
+        public List<Cuota> Cuotas { get; set; }
+        public string id { get; set; }
+        public decimal disponible { get; set; }
+        public int nSubProd { get; set; }
+        public decimal CapitalPorVencerSinPagar { get; set; }
+        public decimal CuotasVencidasVigenteSinPagar { get; set; }
+        public bool EsReprogramado { get; set; }
+        public decimal PrecioRecompra { get; set; }
     }
 }

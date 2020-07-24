@@ -117,9 +117,12 @@ namespace GestionCartera.API.Controllers
                 var clasificaciones = await _ReporteService.GetClasificacionesCSV(CarteraID, ProductoID);
                 FileGenerator.CSV<ClasificacionesCSV>(clasificaciones, absClasificaciones);
 
-                var absResumen = ruta + "/" + "Resumen.xlsx";
-                var resumen = await _ReporteService.ResumenYapamotors(CarteraID, ProductoID);
-                FileGenerator.Excel<ResumenYapamotors>(resumen, "Resumen", absResumen);
+                if (ProductoID == 2)
+                {                 
+                    var absResumen = ruta + "/" + "Resumen.xlsx";
+                    var resumen = await _ReporteService.ResumenYapamotors(CarteraID, ProductoID);
+                    FileGenerator.Excel<ResumenYapamotors>(resumen, "Resumen", absResumen);
+                }
 
                 var absAnexo = ruta + "/" + "Anexo.xlsx";
                 var anexo = await _ReporteService.AnexoYapamotors(CarteraID, ProductoID);

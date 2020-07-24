@@ -70,5 +70,27 @@ namespace GestionCartera.API.Controllers
                 throw ex;
             }
         }
+
+
+
+        /// <summary>
+        /// GetCuotasFondeador
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("GetCuotasFondeador")]
+        public async Task<List<Cuota>> GetCuotasFondeador([FromForm] string buscar)
+        {
+            try
+            {
+                var res = await _CuotaService.GetCuotasFondeador(buscar);
+                return res;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }

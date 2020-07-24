@@ -162,5 +162,25 @@ namespace DAL.Repositories
                 throw ex;
             }
         }
+
+        public async Task<List<Credito>> CreditosFondeador(DateTime desde, DateTime hasta)
+        {
+            try
+            {
+                string query = "exec dbo.GetCreditosFondeador @desde, @hasta";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@desde", desde);
+                param.Add("@hasta", hasta);
+
+                var res = await Query<Credito>(query, param);
+
+                return res.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

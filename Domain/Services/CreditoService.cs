@@ -88,5 +88,18 @@ namespace Domain.Services
                 throw e;
             }
         }
+
+        public async Task<List<Credito>> CreditosFondeador(DateTime desde, DateTime hasta)
+        {
+            try
+            {
+                var res = await _CreditoRepo.CreditosFondeador(desde, hasta);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

@@ -61,6 +61,23 @@ namespace DAL.Repositories
             }
         }
 
+        public async Task<List<Cuota>> GetCuotasFondeador(string buscar)
+        {
+            try
+            {
+                string q = "exec dbo.GetCuotasFondeador @buscar";
+
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@buscar", buscar);
+
+                return await Query<Cuota>(q, param);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<List<Cuota>> GetCuotasPorVencer(DateTime pagosDesde, DateTime pagosHasta, string codigoFondeador)
         {
             try

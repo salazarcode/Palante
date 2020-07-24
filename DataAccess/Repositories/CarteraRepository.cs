@@ -52,9 +52,10 @@ namespace DAL.Repositories
         {
             try
             {
-                string query = "exec [EliminarCartera] @CarteraID";
+                string query = "exec [EliminarCartera] @CarteraID, @ProductoID";
                 Dictionary<string, object> param = new Dictionary<string, object>();
                 param.Add("@CarteraID", cartera.CarteraID);
+                param.Add("@ProductoID", cartera.ProductoID);
 
                 var res = await Execute(query, param);
 
