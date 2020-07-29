@@ -36,7 +36,21 @@ namespace Domain.Services
         {
             try
             {
-                var res = await _ReporteRepo.ResumenYapamotors(carteraid,  ProductoID);
+                var res = await _ReporteRepo.ResumenYapamotors(carteraid, ProductoID);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+
+        async Task<List<ResumenPapyme>> IReporteService.ResumenPapyme(int carteraid, int ProductoID)
+        {
+            try
+            {
+                var res = await _ReporteRepo.ResumenPapyme(carteraid, ProductoID);
                 return res;
             }
             catch (Exception e)
@@ -50,7 +64,21 @@ namespace Domain.Services
         {
             try
             {
-                var res = await _ReporteRepo.AnexoYapamotors(carteraid,  ProductoID);
+                var res = await _ReporteRepo.AnexoYapamotors(carteraid, ProductoID);
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+
+        async Task<List<AnexoPapyme>> IReporteService.AnexoPapyme(int carteraid, int ProductoID)
+        {
+            try
+            {
+                var res = await _ReporteRepo.AnexoPapyme(carteraid, ProductoID);
                 return res;
             }
             catch (Exception e)

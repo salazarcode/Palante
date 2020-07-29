@@ -58,6 +58,25 @@ namespace DAL.Repositories
             }
         }
 
+        async Task<List<ResumenPapyme>> IReporteRepository.ResumenPapyme(int carteraid, int ProductoID)
+        {
+
+            try
+            {
+                string query = "exec dbo.ResumenPapyme @carteraid, @ProductoID";
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@carteraid", carteraid);
+                param.Add("@ProductoID", ProductoID);
+                var res = await Query<ResumenPapyme>(query, param);
+
+                return res.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         async Task<List<AnexoYapamotors>> IReporteRepository.AnexoYapamotors(int carteraid, int ProductoID)
         {
 
@@ -68,6 +87,25 @@ namespace DAL.Repositories
                 param.Add("@carteraid", carteraid);
                 param.Add("@ProductoID", ProductoID);
                 var res = await Query<AnexoYapamotors>(query, param);
+
+                return res.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        async Task<List<AnexoPapyme>> IReporteRepository.AnexoPapyme(int carteraid, int ProductoID)
+        {
+
+            try
+            {
+                string query = "exec dbo.AnexoPapyme @carteraid, @ProductoID";
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@carteraid", carteraid);
+                param.Add("@ProductoID", ProductoID);
+                var res = await Query<AnexoPapyme>(query, param);
 
                 return res.ToList();
             }

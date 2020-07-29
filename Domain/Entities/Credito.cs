@@ -46,6 +46,7 @@ namespace Domain.Entities
         public int nSubProd { get; set; }
         public decimal CapitalPorVencerSinPagar { get; set; }
         public decimal CuotasVencidasVigenteSinPagar { get; set; }
+        public decimal CuotasVencidasVigenteSinPerGracia { get; set; }
         public bool EsReprogramado { get; set; }
         public decimal PrecioRecompra { get; set; }
     }

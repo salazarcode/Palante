@@ -15,6 +15,8 @@ namespace Domain.Contracts.Repositories
         Task<List<ClasificacionesCSV>> GetClasificacionesCSV(int CarteraID, int ProductoID);
         Task<List<ResumenYapamotors>> ResumenYapamotors(int CarteraID, int ProductoID);
         Task<List<AnexoYapamotors>> AnexoYapamotors(int CarteraID, int ProductoID);
+        Task<List<ResumenPapyme>> ResumenPapyme(int CarteraID, int ProductoID);
+        Task<List<AnexoPapyme>> AnexoPapyme(int CarteraID, int ProductoID);
         Task<List<PagosExcel>> GetPagosExcel(int PagoID);
         Task<List<PagosCSV>> GetPagosCSV(int PagoID);
     }

@@ -122,11 +122,21 @@ namespace GestionCartera.API.Controllers
                     var absResumen = ruta + "/" + "Resumen.xlsx";
                     var resumen = await _ReporteService.ResumenYapamotors(CarteraID, ProductoID);
                     FileGenerator.Excel<ResumenYapamotors>(resumen, "Resumen", absResumen);
-                }
 
-                var absAnexo = ruta + "/" + "Anexo.xlsx";
-                var anexo = await _ReporteService.AnexoYapamotors(CarteraID, ProductoID);
-                FileGenerator.Excel<AnexoYapamotors>(anexo, "Anexo", absAnexo);
+                    var absAnexo = ruta + "/" + "Anexo.xlsx";
+                    var anexo = await _ReporteService.AnexoYapamotors(CarteraID, ProductoID);
+                    FileGenerator.Excel<AnexoYapamotors>(anexo, "Anexo", absAnexo);
+                }
+                if (ProductoID == 1)
+                {
+                    var absResumen = ruta + "/" + "Resumen.xlsx";
+                    var resumen = await _ReporteService.ResumenPapyme(CarteraID, ProductoID);
+                    FileGenerator.Excel<ResumenPapyme>(resumen, "Resumen", absResumen);
+
+                    var absAnexo = ruta + "/" + "Anexo.xlsx";
+                    var anexo = await _ReporteService.AnexoPapyme(CarteraID, ProductoID);
+                    FileGenerator.Excel<AnexoPapyme>(anexo, "Anexo", absAnexo);
+                }
 
                 var absSuperResumen = ruta + "/" + "ResumenDetallado.xlsx";
                 Dictionary<string, dynamic> dict = new Dictionary<string, dynamic>();
