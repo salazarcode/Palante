@@ -178,11 +178,13 @@ namespace DAL.Repositories
 
                 var pagos = String.Join(";", ensamblado);
 
-                string query = "dbo.CrearPago @f, @p, @creador, @pagos";
+                string query = "dbo.CrearPago @pago, @f, @p, @EsMochila, @creador, @pagos";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
+                param.Add("@pago", pago.PagoID);
                 param.Add("@f", pago.Fondeador.FondeadorID);
                 param.Add("@p", pago.Producto.nValor);
+                param.Add("@Esmochila", pago.EsMochila);
                 param.Add("@creador", pago.CreadoPor);
                 param.Add("@pagos", pagos);
 

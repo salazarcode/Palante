@@ -10,6 +10,6 @@ namespace Domain.Contracts.Repositories
     {
         Task<List<Cuota>> GetCuotas(DateTime pagosDesde, DateTime pagosHasta, string nEstadoCuota);
         Task<List<Cuota>> GetCuotasPorVencer(DateTime pagosDesde, DateTime pagosHasta, string codigoFondeador);
-        Task<List<Cuota>> GetCuotasFondeador(string buscar);
+        Task<List<Cuota>> GetCuotasFondeador(string buscar, DateTime cuotasHasta, string estados);
     }
 }

@@ -30,11 +30,11 @@ namespace Domain.Services
             }
         }
 
-        public async Task<List<Cuota>> GetCuotasFondeador(string buscar)
+        public async Task<List<Cuota>> GetCuotasFondeador(string buscar, DateTime cuotasHasta, string estados)
         {
             try
             {
-                var res = await _cuotaRepo.GetCuotasFondeador(buscar);
+                var res = await _cuotaRepo.GetCuotasFondeador(buscar, cuotasHasta, estados);
                 return res;
             }
             catch (Exception e)

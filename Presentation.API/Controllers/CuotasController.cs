@@ -79,11 +79,11 @@ namespace GestionCartera.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("GetCuotasFondeador")]
-        public async Task<List<Cuota>> GetCuotasFondeador([FromForm] string buscar)
+        public async Task<List<Cuota>> GetCuotasFondeador([FromForm] DateTime cuotasHasta, [FromForm] string estados, [FromForm] string buscar = "")
         {
             try
             {
-                var res = await _CuotaService.GetCuotasFondeador(buscar);
+                var res = await _CuotaService.GetCuotasFondeador(buscar, cuotasHasta, estados);
                 return res;
             }
             catch (Exception ex)

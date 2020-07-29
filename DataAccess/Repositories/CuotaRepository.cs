@@ -61,14 +61,16 @@ namespace DAL.Repositories
             }
         }
 
-        public async Task<List<Cuota>> GetCuotasFondeador(string buscar)
+        public async Task<List<Cuota>> GetCuotasFondeador(string buscar, DateTime cuotasHasta, string estados)
         {
             try
             {
-                string q = "exec dbo.GetCuotasFondeador @buscar";
+                string q = "exec dbo.GetCuotasFondeador @buscar, @cuotasHasta, @estados";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
-                param.Add("@buscar", buscar);
+                param.Add("@buscar", buscar == null ? "" : buscar);
+                param.Add("@cuotasHasta", cuotasHasta);
+                param.Add("@estados", estados);
 
                 return await Query<Cuota>(q, param);
             }

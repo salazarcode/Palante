@@ -9,6 +9,7 @@ namespace Domain.Entities
         public int PagoID { get; set; }
         public Fondeador Fondeador { get; set; }
         public Producto Producto { get; set; }
+        public bool EsMochila{ get; set; }
         public string CreadoPor { get; set; }
         public DateTime Creado { get; set; }
         public DateTime Modificado { get; set; }

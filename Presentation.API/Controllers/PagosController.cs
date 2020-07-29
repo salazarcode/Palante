@@ -59,6 +59,8 @@ namespace GestionCartera.API.Controllers
                 input.Detalles = detalles;
                 input.Producto = new Producto() { nValor = pago.ProductoID };
                 input.Fondeador = new Fondeador() { FondeadorID = pago.FondeadorID };
+                input.EsMochila = pago.EsMochila;
+                input.PagoID = pago.PagoID;
 
                 var res = await _PagoService.Save(input);
                 return res;
