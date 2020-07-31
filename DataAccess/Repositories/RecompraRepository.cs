@@ -49,6 +49,7 @@ namespace DAL.Repositories
                     select r.*,cr.codigoFondeador, cr.monto precioRecompra 
                     from dbo.recompras r
                     inner join dbo.CreditoRecompra cr on cr.RecompraID = r.RecompraID
+                    order by r.recompraid desc
                     ";
 
                 var orderDictionary = new Dictionary<int, Recompra>();
