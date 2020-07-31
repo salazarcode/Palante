@@ -6,21 +6,22 @@ namespace Domain.ValueObjects
 {
     public class ResumenPapyme
 	{
-		public string operacion { get; set; }
-		public string cliente { get; set; }
-		public string identificacion { get; set; }
-		public string fechaVenta { get; set; }
-		public string moneda { get; set; }
-		public string consecionario { get; set; }
-		public string marca { get; set; }
-		public string modelo { get; set; }
-		public string valorAutomovilUsd { get; set; }
-		public string cuotaInicialUds { get; set; }
-		public string porcIncial { get; set; }
-		public string gpsSegurosYOtrosUsd { get; set; }
-		public string montoConcedido { get; set; }
-		public string cal { get; set; }
-		public string tipoCliente { get; set; }
-
-	}
+        public int ID { get; set; }
+        public string NroOperacion { get; set; }
+        public string DniClienteRepresentanteLegal { get; set; }
+        public string ApellidoPaterno { get; set; }
+        public string ApellidoMaterno { get; set; }
+        public string Nombre { get; set; }
+        public string Fondeador { get; set; }
+        public int NumeroVenta { get; set; }
+        public string FechaVenta { get; set; }
+        public string RUC { get; set; }
+        public string RazonSocial { get; set; }
+        public string FechaDesembolso { get; set; }
+        public string Plaza { get; set; }
+        public string TipoVivienda { get; set; }
+        public string ValorComercial { get; set; }
+        public string ValorRealizacion { get; set; }
+        public string MontoAprobadoSoles { get; set; }
+    }
 }

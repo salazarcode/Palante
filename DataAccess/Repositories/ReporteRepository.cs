@@ -67,9 +67,63 @@ namespace DAL.Repositories
                 Dictionary<string, object> param = new Dictionary<string, object>();
                 param.Add("@carteraid", carteraid);
                 param.Add("@ProductoID", ProductoID);
-                var res = await Query<ResumenPapyme>(query, param);
+                var registros = await Query<ResumenPapyme>(query, param);
 
-                return res.ToList();
+                var operaciones = registros.Select(x => x.NroOperacion).Distinct().ToList();
+
+                operaciones.ForEach(operacion =>
+                {
+                    var elems = registros.FindAll(x => x.NroOperacion == operacion);
+                    if (elems.Count != 1) {
+                        var elem = elems.First();
+
+                        ResumenPapyme res = new ResumenPapyme();
+                        res.ID                              = elem.ID;
+                        res.NroOperacion                    = elem.NroOperacion;
+                        res.DniClienteRepresentanteLegal    = elem.DniClienteRepresentanteLegal;
+                        res.ApellidoPaterno                 = elem.ApellidoPaterno;
+                        res.ApellidoMaterno                 = elem.ApellidoMaterno;
+                        res.Nombre                          = elem.Nombre;
+                        res.Fondeador                       = elem.Fondeador;
+                        res.NumeroVenta                     = elem.NumeroVenta;
+                        res.FechaVenta                      = elem.FechaVenta;
+                        res.RUC                             = elem.RUC;
+                        res.RazonSocial                     = elem.RazonSocial;
+                        res.FechaDesembolso                 = elem.FechaDesembolso;
+                        res.Plaza                           = elem.Plaza;
+
+                        res.TipoVivienda = elems.Count().ToString() + " GARANTÍA" + (elems.Count() > 1 ? "S" : "");
+                        res.ValorComercial = elems.Select(x => Convert.ToDecimal(x.ValorComercial)).Sum().ToString();
+                        res.ValorRealizacion = elems.Select(x => Convert.ToDecimal(x.ValorRealizacion)).Sum().ToString();
+                        res.MontoAprobadoSoles = elems.Select(x => Convert.ToDecimal(x.MontoAprobadoSoles)).Sum().ToString();
+
+                        elems.ForEach(a =>
+                        {
+                            a.MontoAprobadoSoles = "";
+                        });
+
+                        registros.Add(res);                    
+                    }
+                });
+
+                List<ResumenPapyme> resumenes = new List<ResumenPapyme>();
+                operaciones.ForEach(operacion =>
+                {
+                    var res = registros.FindAll(x => x.NroOperacion == operacion);
+
+                    registros.FindAll(x => x.NroOperacion == operacion && x.MontoAprobadoSoles != "").ForEach(ele => {
+                        resumenes.Add(ele);
+                    });
+
+                    registros.FindAll(x => x.NroOperacion == operacion && x.MontoAprobadoSoles == "").ForEach(ele => {
+                        resumenes.Add(ele);
+                    });
+                });
+
+                for (int i = 1; i < resumenes.Count; i++)
+                    resumenes[i].ID = i;
+
+                return resumenes;
             }
             catch (Exception ex)
             {

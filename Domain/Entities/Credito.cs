@@ -44,6 +44,7 @@ namespace Domain.Entities
         public string id { get; set; }
         public decimal disponible { get; set; }
         public int nSubProd { get; set; }
+        public decimal CapitalSinPagar { get; set; }
         public decimal CapitalPorVencerSinPagar { get; set; }
         public decimal CuotasVencidasVigenteSinPagar { get; set; }
         public decimal CuotasVencidasVigenteSinPerGracia { get; set; }
