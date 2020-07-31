@@ -90,12 +90,11 @@ namespace DAL.Repositories
                         res.RUC                             = elem.RUC;
                         res.RazonSocial                     = elem.RazonSocial;
                         res.FechaDesembolso                 = elem.FechaDesembolso;
-                        res.Plaza                           = elem.Plaza;
+                        res.MontoAprobadoSoles              = elem.MontoAprobadoSoles;
 
                         res.TipoVivienda = elems.Count().ToString() + " GARANTÍA" + (elems.Count() > 1 ? "S" : "");
                         res.ValorComercial = elems.Select(x => Convert.ToDecimal(x.ValorComercial)).Sum().ToString();
                         res.ValorRealizacion = elems.Select(x => Convert.ToDecimal(x.ValorRealizacion)).Sum().ToString();
-                        res.MontoAprobadoSoles = elems.Select(x => Convert.ToDecimal(x.MontoAprobadoSoles)).Sum().ToString();
 
                         elems.ForEach(a =>
                         {
