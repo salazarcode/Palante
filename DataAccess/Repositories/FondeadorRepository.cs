@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using Dapper;
 using Dapper.Mapper;
+using Transversal.Util;
 
 namespace DAL.Repositories
 {
@@ -20,6 +21,7 @@ namespace DAL.Repositories
         { 
             try
             {
+
                 string query = "select * from fondeadores";
                 var res = await Query<Fondeador>(query, null);
 

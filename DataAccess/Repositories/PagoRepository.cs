@@ -9,13 +9,16 @@ using System.Linq;
 using Dapper;
 using Dapper.Mapper;
 using System.Data.SqlClient;
+using Transversal.Util;
 
 namespace DAL.Repositories
 {
     public class PagoRepository : SuperRepository, IPagoRepository
     {
-        public PagoRepository(IConfiguration configuration) : base(configuration)
+        private IMyLogger _logger;
+        public PagoRepository(IConfiguration configuration, IMyLogger logger) : base(configuration)
         {
+            _logger = logger;
         }
 
         public async Task<int> Confirmar(int PagoID)
@@ -171,20 +174,22 @@ namespace DAL.Repositories
                     campos.Add(x.codigoFondeador.ToString());
                     campos.Add(x.nNroCuota.ToString());
                     campos.Add(x.Monto.ToString());
-                    campos.Add(x.EsDeuda.ToString());
+                    campos.Add(x.EsDeuda?"1":"0");
 
                     return String.Join(',', campos);
                 }).ToList();
 
                 var pagos = String.Join(";", ensamblado);
 
+                await _logger.Log("Nuevo pago: 1.Fondeador: " + pago.Fondeador.FondeadorID + " Producto: " + pago.Producto.nValor + " EsMochila: " + pago.EsMochila + " Creador: " + pago.CreadoPor + " Total del pago: " + pago.Detalles.Sum(x => x.Monto) + " Pagos: " + pagos);
+                
                 string query = "dbo.CrearPago @pago, @f, @p, @EsMochila, @creador, @pagos";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
                 param.Add("@pago", pago.PagoID);
                 param.Add("@f", pago.Fondeador.FondeadorID);
                 param.Add("@p", pago.Producto.nValor);
-                param.Add("@Esmochila", pago.EsMochila);
+                param.Add("@EsMochila", pago.EsMochila);
                 param.Add("@creador", pago.CreadoPor);
                 param.Add("@pagos", pagos);
 
@@ -194,6 +199,7 @@ namespace DAL.Repositories
             }
             catch (Exception ex)
             {
+                await _logger.Log("Error en Nuevo pago: " + ex.Message + ", Clase: " + this.GetType().FullName);
                 throw ex;
             }
         }

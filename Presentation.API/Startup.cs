@@ -44,6 +44,7 @@ namespace GestionCartera.API
             services.AddSingleton<ICronogramaRepository, CronogramaRepository>();
             services.AddSingleton<IAmortizacionRepository, AmotizacionRepository>();
             services.AddSingleton<ICuotaRepository, CuotaRepository>();
+            services.AddSingleton<IMyLogger, MyLogger>();
 
             services.AddSingleton<IClienteService, ClienteService>();
             services.AddSingleton<ICreditoService, CreditoService>();

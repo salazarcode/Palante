@@ -33,23 +33,17 @@ namespace GestionCartera.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("Save")]
-        public async Task<int> Save([FromForm] SavePagoVO pago)
+        public async Task<int> Save([FromBody] SavePagoVO pago)
         {
             try
             {
-                List<string> lista = pago.Pagos.Split(";").ToList();
-                List<PagoDetalle> detalles = lista.Select(x =>
+                List<PagoDetalle> detalles = pago.Pagos.Select(x =>
                 {
-                    var res = x.Split(",");
                     PagoDetalle det = new PagoDetalle();
-                    det.codigoFondeador = res[0];
-
-                    det.nNroCuota = Convert.ToInt32(res[1]);
-
-                    det.Monto = Convert.ToDecimal(res[2]);
-
-                    det.EsDeuda = Convert.ToBoolean(res[3]);
-
+                    det.codigoFondeador = x.codigoFondeador;
+                    det.nNroCuota = x.nNroCuota;
+                    det.Monto = x.Monto;
+                    det.EsDeuda = false;
                     return det;
                 }).ToList();
 

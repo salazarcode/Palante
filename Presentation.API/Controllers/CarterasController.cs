@@ -78,7 +78,6 @@ namespace GestionCartera.API.Controllers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -119,7 +118,6 @@ namespace GestionCartera.API.Controllers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }

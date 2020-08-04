@@ -1,0 +1,24 @@
+Invalid object name 'fondefadores'.
+Could not find stored procedure 'EditarCartera'.
+Could not find stored procedure 'EditarCartera'.
+Could not find stored procedure 'EditarCartera'.
+****************************************************************
+Creación de un nuevo pago
+Fondeador: Domain.Entities.Fondeador
+Producto: Domain.Entities.Producto
+EsMochila: False
+Creador: krobles
+Total del pago: 300056.98
+****************************************************************
+Resultado: 166
+****************************************************************
+****************************************************************
+Creación de un nuevo pago
+Fondeador: 1
+Producto: 2
+EsMochila: False
+Creador: krobles
+Total del pago: 228698.46
+****************************************************************
+Resultado: 1059
+****************************************************************

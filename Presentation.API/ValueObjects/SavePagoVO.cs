@@ -12,6 +12,13 @@ namespace GestionCartera.API.ValueObjects
         public int ProductoID { get; set; }
         public bool EsMochila { get; set; }
         public string Creador { get; set; }
-        public string Pagos { get; set; }
+        public List<PagoVO> Pagos { get; set; }
+    }
+
+    public class PagoVO
+    {
+        public string codigoFondeador { get; set; }
+        public int nNroCuota { get; set; }
+        public decimal Monto { get; set; }
     }
 }

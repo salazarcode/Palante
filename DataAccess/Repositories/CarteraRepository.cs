@@ -9,6 +9,7 @@ using System.Linq;
 using Dapper;
 using Dapper.Mapper;
 using System.Data.SqlClient;
+using Transversal.Util;
 
 namespace DAL.Repositories
 {
@@ -61,9 +62,8 @@ namespace DAL.Repositories
 
                 return res;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
                 throw;
             }
         }
@@ -173,9 +173,9 @@ namespace DAL.Repositories
 
                 return res;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw e;
+                throw ex;
             }
         }
 
@@ -194,9 +194,9 @@ namespace DAL.Repositories
 
                 return res;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw e;
+                throw ex;
             }
         }
 
