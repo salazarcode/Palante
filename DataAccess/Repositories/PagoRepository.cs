@@ -168,33 +168,34 @@ namespace DAL.Repositories
         {
             try
             {
-                List<string> ensamblado = pago.Detalles.Select(x =>
-                {
-                    List<string> campos = new List<string>();
-                    campos.Add(x.codigoFondeador.ToString());
-                    campos.Add(x.nNroCuota.ToString());
-                    campos.Add(x.Monto.ToString());
-                    campos.Add(x.EsDeuda?"1":"0");
-
-                    return String.Join(',', campos);
-                }).ToList();
-
-                var pagos = String.Join(";", ensamblado);
-
-                await _logger.Log("Nuevo pago: 1.Fondeador: " + pago.Fondeador.FondeadorID + " Producto: " + pago.Producto.nValor + " EsMochila: " + pago.EsMochila + " Creador: " + pago.CreadoPor + " Total del pago: " + pago.Detalles.Sum(x => x.Monto) + " Pagos: " + pagos);
-                
-                string query = "dbo.CrearPago @pago, @f, @p, @EsMochila, @creador, @pagos";
-
+                //CREACIÓN DEL PAGO O ACTUALIZACION DE LA CABECERA. 
+                //SI ES ACTUALIZACION SE ELIMINAN LOS PAGODETALLES ASOCIADOS.
+                //*************************************************************************************************************
                 Dictionary<string, object> param = new Dictionary<string, object>();
                 param.Add("@pago", pago.PagoID);
                 param.Add("@f", pago.Fondeador.FondeadorID);
                 param.Add("@p", pago.Producto.nValor);
                 param.Add("@EsMochila", pago.EsMochila);
                 param.Add("@creador", pago.CreadoPor);
-                param.Add("@pagos", pagos);
 
-                var res = await Execute(query, param);
+                string query = "dbo.CrearPago @pago, @f, @p, @EsMochila, @creador";
+                int PagoID = (await Query<int>(query, param)).First();
+                await _logger.Log("Pago creado con ID: " + PagoID);
 
+
+
+                //CON EL PAGOID ANTERIOR SE CREAN LOS PAGODETALLE, 
+                //EL SP CREA DE UNO EN UNO, ASÍ QUE SE COMPONE UN BATCH DE LLAMAS.
+                //EL STRING BATCH SE GUARDA EN EL LOG 
+                //*************************************************************************************************************
+                string queryDetalles = "";
+                pago.Detalles.ForEach(x => {
+                    queryDetalles += "exec dbo.CrearPagoDetalle " + PagoID + ", '" + x.codigoFondeador + "', " + x.nNroCuota + ", " + x.Monto.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "; ";
+                });
+                await _logger.Log("Se crearán los PagoDetalles siguientes: " + queryDetalles);
+
+                int res = await Execute(queryDetalles, null); 
+                await _logger.Log("Resultado: " + res);
                 return res;
             }
             catch (Exception ex)

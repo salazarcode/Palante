@@ -89,11 +89,11 @@ namespace Domain.Services
             }
         }
 
-        public async Task<List<Credito>> CreditosFondeador(DateTime desde, DateTime hasta)
+        public async Task<List<Credito>> CreditosFondeador(DateTime desde, DateTime hasta, string busqueda)
         {
             try
             {
-                var res = await _CreditoRepo.CreditosFondeador(desde, hasta);
+                var res = await _CreditoRepo.CreditosFondeador(desde, hasta, busqueda);
                 return res;
             }
             catch (Exception e)

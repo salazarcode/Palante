@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using GestionCartera.API.ValueObjects;
 using Transversal.Util;
+using Domain.Contracts.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace GestionCartera.API.Controllers
 {
@@ -19,10 +21,12 @@ namespace GestionCartera.API.Controllers
     public class PagosController : ControllerBase
     {
         private readonly IPagoService _PagoService;
+        private readonly IMyLogger _logger;
 
-        public PagosController(IPagoService PagoService)
+        public PagosController(IPagoService PagoService, IMyLogger logger)
         {
             _PagoService = PagoService;
+            _logger = logger;
         }
 
     
@@ -61,6 +65,8 @@ namespace GestionCartera.API.Controllers
             }
             catch (Exception ex)
             {
+
+                await _logger.Log("Error en Nuevo pago: " + ex.Message + ", Clase: " + this.GetType().FullName);
                 throw ex;
             }
         }

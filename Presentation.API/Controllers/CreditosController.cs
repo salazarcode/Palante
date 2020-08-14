@@ -55,11 +55,11 @@ namespace GestionCartera.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("CreditosFondeador")]
-        public async Task<IEnumerable<Credito>> CreditosFondeador([FromForm] DateTime desde, [FromForm] DateTime hasta)
+        public async Task<IEnumerable<Credito>> CreditosFondeador([FromForm] DateTime desde, [FromForm] DateTime hasta, [FromForm] string busqueda = "")
         {
             try
             {
-                var res = await _CreditoService.CreditosFondeador(desde, hasta);
+                var res = await _CreditoService.CreditosFondeador(desde, hasta, busqueda);
                 return res;
             }
             catch (Exception ex)

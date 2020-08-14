@@ -163,15 +163,16 @@ namespace DAL.Repositories
             }
         }
 
-        public async Task<List<Credito>> CreditosFondeador(DateTime desde, DateTime hasta)
+        public async Task<List<Credito>> CreditosFondeador(DateTime desde, DateTime hasta, string busqueda)
         {
             try
             {
-                string query = "exec dbo.GetCreditosFondeador @desde, @hasta";
+                string query = "exec dbo.GetCreditosFondeador @desde, @hasta, @busqueda";
 
                 Dictionary<string, object> param = new Dictionary<string, object>();
                 param.Add("@desde", desde);
                 param.Add("@hasta", hasta);
+                param.Add("@busqueda", busqueda);
 
                 var res = await Query<Credito>(query, param);
 

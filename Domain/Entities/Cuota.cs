@@ -14,10 +14,12 @@ namespace Domain.Entities
         public DateTime dFecInicio { get; set; }
         public DateTime dFecVcto { get; set; }
         public DateTime dFecPagoCap { get; set; }
+        public DateTime FechaPago { get; set; }
         public int nDias { get; set; }
         public decimal nCapitalReducido { get; set; }
         public decimal nCapital { get; set; }
         public decimal nIntereses { get; set; }
+        public decimal nInteres { get; set; }
         public decimal nInteresComp { get; set; }
         public decimal nInteresMora { get; set; }
         public decimal nPerGracia { get; set; }
@@ -36,7 +38,6 @@ namespace Domain.Entities
 
         public string CodigoCredito { get; set; }
         public string NumeroCuota { get; set; }
-        public string FechaPago { get; set; }
         public string Amortizacion { get; set; }
         public string Interes { get; set; }
         public string PeriodoGracia { get; set; }

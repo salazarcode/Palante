@@ -31,27 +31,11 @@ namespace GestionCartera.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("Save")]
-        public async Task<int> Save([FromForm] SaveRecompraVO intake)
+        public async Task<int> Save([FromBody] Recompra recompra)
         {
             try
             {
-                Recompra res = new Recompra
-                {
-                    CreadoPor = intake.CreadoPor,
-                    RecompraID = intake.RecompraID,
-                    Fondeador = new Fondeador
-                    {
-                        FondeadorID = intake.FondeadorID
-                    },
-                    Producto = new Producto
-                    {
-                        nValor = intake.ProductoID
-                    },
-                    CreditosJoined = intake.Creditos,
-                    FechaCalculo = intake.FechaCalculo
-                };
-
-                int id = await _RecompraService.Save(res);
+                int id = await _RecompraService.Save(recompra);
 
                 return id;
             }

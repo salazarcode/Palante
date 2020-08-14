@@ -16,9 +16,11 @@ namespace DAL.Repositories
     public class RecompraRepository : SuperRepository, IRecompraRepository
     {
         public ICreditoRepository _creditosRepository { get; set; }
-        public RecompraRepository(IConfiguration configuration, ICreditoRepository creditosRepository) : base(configuration)
+        public IMyLogger _logger { get; set; }
+        public RecompraRepository(IConfiguration configuration, ICreditoRepository creditosRepository, IMyLogger logger) : base(configuration)
         {
             _creditosRepository = creditosRepository;
+            _logger = logger;
         }
 
         public async Task<int> Add(int RecompraID, int nCodCred)
@@ -46,30 +48,30 @@ namespace DAL.Repositories
             try
             {
                 string query = @"
-                    select r.*,cr.codigoFondeador, cr.monto precioRecompra 
-                    from dbo.recompras r
-                    inner join dbo.CreditoRecompra cr on cr.RecompraID = r.RecompraID
-                    order by r.recompraid desc
+                        select r.*,cr.* 
+                        from dbo.recompras r
+                        inner join dbo.CreditoRecompra cr on cr.RecompraID = r.RecompraID
+                        order by r.recompraid desc
                     ";
 
                 var orderDictionary = new Dictionary<int, Recompra>();
 
 
                 using var conn = new SqlConnection(_connectionString);
-                var list = await conn.QueryAsync<Recompra, Credito, Recompra>(
+                var list = await conn.QueryAsync<Recompra, RecompraDetalle, Recompra>(
                     query,
-                    (Recompra, credito) =>
+                    (Recompra, RecompraDetalle) =>
                     {
                         Recompra RecompraEntry;
 
                         if (!orderDictionary.TryGetValue(Recompra.RecompraID, out RecompraEntry))
                         {
                             RecompraEntry = Recompra;
-                            RecompraEntry.Creditos = new List<Credito>();
+                            RecompraEntry.Detalles = new List<RecompraDetalle>();
                             orderDictionary.Add(RecompraEntry.RecompraID, RecompraEntry);
                         }
 
-                        RecompraEntry.Creditos.Add(credito);
+                        RecompraEntry.Detalles.Add(RecompraDetalle);
                         return RecompraEntry;
                     },
                     splitOn: "codigoFondeador");
@@ -127,11 +129,10 @@ namespace DAL.Repositories
             {
                 string query = @"
                     select 
-	                    r.*, c.*
+	                    r.*, cr.*
                     from 
                         Recompras r 
                         inner join creditorecompra cr on cr.recompraid = r.recompraid
-                        inner join creditos c on c.ncodcred = cr.ncodcred
                     where
                         r.recompraid =" + recompra.RecompraID;
 
@@ -139,34 +140,26 @@ namespace DAL.Repositories
 
 
                 using var conn = new SqlConnection(_connectionString);
-                var list = await conn.QueryAsync<Recompra, Credito, Recompra>(
+                var list = await conn.QueryAsync<Recompra, RecompraDetalle, Recompra>(
                     query,
-                    (Recompra, credito) =>
+                    (Recompra, RecompraDetalle) =>
                     {
                         Recompra RecompraEntry;
 
                         if (!orderDictionary.TryGetValue(Recompra.RecompraID, out RecompraEntry))
                         {
                             RecompraEntry = Recompra;
-                            RecompraEntry.Creditos = new List<Credito>();
+                            RecompraEntry.Detalles = new List<RecompraDetalle>();
                             orderDictionary.Add(RecompraEntry.RecompraID, RecompraEntry);
                         }
 
-                        RecompraEntry.Creditos.Add(credito);
+                        RecompraEntry.Detalles.Add(RecompraDetalle);
                         return RecompraEntry;
                     },
-                    splitOn: "nCodCred");
+                    splitOn: "codigoFondeador");
 
 
                 var res = list.Distinct().ToList();
-
-                var creditosStr = String.Join(",", res.First().Creditos.Select(x => x.nCodCred));
-                var creditosCompletos = await _creditosRepository.Search(new CreditoSearch() { 
-                    Query = creditosStr,
-                    Fecha = DateTime.Now
-                });
-
-                res.First().Creditos = creditosCompletos;
 
                 return res;
             }
@@ -202,18 +195,62 @@ namespace DAL.Repositories
             {
                 if (entity.RecompraID == 0)
                 {
-                    string query = "exec [CrearRecompra] @CreadoPor, @FechaCalculo, @FondeadorID, @ProductoID, @creditos";
+                    string query = "exec [CrearRecompra] @CreadoPor, @FechaCalculo, @FondeadorID, @ProductoID";
 
                     Dictionary<string, object> param = new Dictionary<string, object>();
                     param.Add("@CreadoPor", entity.CreadoPor);
                     param.Add("@FechaCalculo", entity.FechaCalculo);
-                    param.Add("@FondeadorID", entity.Fondeador.FondeadorID);
-                    param.Add("@ProductoID", entity.Producto.nValor);
-                    param.Add("@creditos", entity.CreditosJoined);
+                    param.Add("@FondeadorID", entity.FondeadorID);
+                    param.Add("@ProductoID", entity.ProductoID);
 
-                    var res = await Execute(query, param);
+                    var RecompraID = (await Query<int>(query, param)).First();
 
-                    return res;
+                    string QueryDetalles = @"
+                        exec RecompraAdd 
+	                        @RecompraID,
+	                        @codigoFondeador,
+	                        @CapitalVigenteVencido,
+	                        @GraciaVigenteVencido,
+	                        @InteresVigenteVencido,
+	                        @CapitalPorVencer,
+	                        @Tasa,
+	                        @CapitalTotal,
+	                        @GraciaTotal,
+	                        @InteresTotal,
+	                        @PrecioRecompra
+                    ";
+
+                    List<int> resultados = new List<int>();
+
+                    for (int i = 0; i < entity.Detalles.Count; i++)
+                    {
+                        var detalle = entity.Detalles[i];
+                        try
+                        {
+                            Dictionary<string, object> paramx = new Dictionary<string, object>();
+                            paramx.Add("@RecompraID", RecompraID);
+                            paramx.Add("@codigoFondeador", detalle.codigoFondeador);
+
+                            paramx.Add("@CapitalVigenteVencido",    detalle.CapitalVigenteVencido   );
+                            paramx.Add("@GraciaVigenteVencido",     detalle.GraciaVigenteVencido    );
+                            paramx.Add("@InteresVigenteVencido",    detalle.InteresVigenteVencido   );
+                            paramx.Add("@CapitalPorVencer", detalle.CapitalPorVencer);
+                            paramx.Add("@Tasa", detalle.Tasa);
+                            paramx.Add("@CapitalTotal",             detalle.CapitalTotal            );
+                            paramx.Add("@GraciaTotal",              detalle.GraciaTotal             );
+                            paramx.Add("@InteresTotal",             detalle.InteresTotal            );
+                            paramx.Add("@PrecioRecompra",           detalle.PrecioRecompra          );
+
+                            var res = await Execute(QueryDetalles, paramx);
+                            resultados.Add(res);
+                        }
+                        catch (Exception ex)
+                        {
+                            await _logger.Log("Error en la inserción de detalles en la recompra: RecompraID: " + RecompraID + ", codigoFondeador: " + detalle.codigoFondeador + ", Error: " + ex.Message);
+                        }
+                    }
+
+                    return RecompraID;
                 }
                 else
                 {
@@ -222,9 +259,8 @@ namespace DAL.Repositories
                     Dictionary<string, object> param = new Dictionary<string, object>();
                     param.Add("@RecompraID", entity.RecompraID);
                     param.Add("@CreadoPor", entity.CreadoPor);
-                    param.Add("@FondeadorID", entity.Fondeador.FondeadorID);
-                    param.Add("@ProductoID", entity.Producto.nValor);
-                    param.Add("@creditos", entity.CreditosJoined);
+                    param.Add("@FondeadorID", entity.FondeadorID);
+                    param.Add("@ProductoID", entity.ProductoID);
 
                     var res = await Execute(query, param);
 
